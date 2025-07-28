@@ -205,3 +205,29 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Unity ML-Agents
+builds/
+*.app/
+*.x86_64
+*.exe
+logs/
+unity_logs/
+
+# Model checkpoints & artifacts
+checkpoints/
+models/
+*.ckpt
+*.pt
+*.pth
+
+# Data directories
+data/
+datasets/
+*.pkl
+*.h5
+*.hdf5
+
+# IDE specific
+.vscode/
+.idea/
