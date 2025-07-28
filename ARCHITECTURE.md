@@ -281,3 +281,22 @@ Extend `EpistemicPlanner` base class for new planning approaches:
 - Natural language belief specification
 - Interactive belief debugging tools
 - Explainable decision interfaces
+
+## Development and Deployment Architecture
+
+### 1. Code Organization
+- **Source Code**: Modular Python package structure in `pwmk/`
+- **Tests**: Comprehensive test suite in `tests/`
+- **Documentation**: API docs and tutorials in `docs/`
+- **Examples**: Reference implementations in `examples/`
+
+### 2. CI/CD Pipeline
+- **Testing**: Automated testing across Python versions
+- **Quality Gates**: Code formatting, linting, type checking
+- **Documentation**: Automated doc building and deployment
+- **Release**: Automated PyPI publishing for tagged releases
+
+### 3. Monitoring and Observability
+- **Performance Metrics**: Training loss, belief accuracy, planning success
+- **System Metrics**: Memory usage, inference latency, reasoning time
+- **Visualization**: Interactive belief graphs and model predictions
