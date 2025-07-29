@@ -1,0 +1,84 @@
+# Testing dependencies for PWMK
+# Use pip-compile to generate test.txt: pip-compile requirements/test.in
+
+# Core testing framework
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-xdist>=3.0.0
+pytest-mock>=3.11.0
+pytest-timeout>=2.1.0
+pytest-asyncio>=0.21.0
+pytest-sugar>=0.9.7
+pytest-html>=3.2.0
+pytest-json-report>=1.5.0
+
+# Property-based and advanced testing
+hypothesis>=6.82.0
+faker>=19.0.0
+factory-boy>=3.3.0
+responses>=0.23.0
+
+# Performance and benchmark testing  
+pytest-benchmark>=4.0.0
+pytest-profiling>=1.7.0
+pytest-memray>=1.4.0
+
+# Integration testing
+pytest-integration>=0.2.2
+pytest-docker>=2.0.0
+testcontainers>=3.7.0
+
+# AI/ML specific testing
+pytest-ml>=0.1.0
+
+# Coverage and reporting
+coverage[toml]>=7.0.0
+pytest-cov>=4.0.0
+coveralls>=3.3.0
+
+# Test data and utilities
+pytest-datadir>=1.4.1
+pytest-fixtures>=0.1.0
+pytest-regressions>=2.5.0
+
+# Mocking and stubbing
+pytest-httpserver>=1.0.8
+responses>=0.23.0
+httpretty>=1.1.4
+freezegun>=1.2.0
+
+# Load and stress testing
+pytest-stress>=1.0.0
+locust>=2.15.0
+
+# Security testing
+bandit[toml]>=1.7.5
+safety>=2.3.0
+
+# Test environment management
+tox>=4.0.0
+pytest-env>=0.8.2
+pytest-dotenv>=0.5.2
+
+# GPU testing support (conditional)
+pytest-gpu>=0.1.0; platform_machine=="x86_64"
+
+# Research validation testing
+pytest-cases>=3.8.0
+pytest-lazy-fixture>=0.6.3
+
+# Test reporting and visualization
+allure-pytest>=2.13.0
+pytest-reportlog>=1.2.0
+
+# Network and external service testing
+pytest-vcr>=1.0.2
+betamax>=0.8.1
+
+# Database testing
+pytest-postgresql>=5.0.0
+pytest-redis>=3.0.0
+
+# Unity ML-Agents testing utilities
+mlagents>=0.30.0; extra=="unity"
+gym>=0.26.0

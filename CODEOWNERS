@@ -1,0 +1,34 @@
+# Code ownership for the Perspective World Model Kit
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global ownership - require review from maintainers
+* @maintainers
+
+# Core library code
+/pwmk/ @maintainers @ai-team
+
+# Configuration and infrastructure
+/.github/ @maintainers @devops-team
+/docker-compose.yml @maintainers @devops-team
+/monitoring/ @maintainers @devops-team
+/pyproject.toml @maintainers
+
+# Documentation
+/docs/ @maintainers @docs-team
+*.md @maintainers @docs-team
+
+# Tests
+/tests/ @maintainers @ai-team
+
+# Security-sensitive files
+/SECURITY.md @maintainers @security-team
+/.bandit @maintainers @security-team
+/safety-policy.yml @maintainers @security-team
+
+# Release and build configuration
+/pyproject.toml @maintainers
+/setup.py @maintainers
+/requirements*.txt @maintainers
+
+# CI/CD workflows (when created)
+/.github/workflows/ @maintainers @devops-team
