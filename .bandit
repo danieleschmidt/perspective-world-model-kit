@@ -1,0 +1,41 @@
+[bandit]
+# Bandit configuration for security analysis
+# See https://bandit.readthedocs.io/en/latest/config.html
+
+# Directories to exclude from scanning
+exclude_dirs = [
+    "tests",
+    "docs",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+    ".git"
+]
+
+# Tests to skip (by ID)
+skips = [
+    "B101",  # assert_used - we use asserts in tests
+    "B601",  # paramiko_calls - may be used for legitimate SSH operations
+]
+
+# Severity levels: LOW, MEDIUM, HIGH
+# Confidence levels: LOW, MEDIUM, HIGH
+
+# Only report issues with MEDIUM confidence and above
+confidence = "MEDIUM"
+
+# Report all severity levels
+severity = "LOW"
+
+# Aggregate output by file
+aggregate = "file"
+
+# Output format: csv, json, txt, xml, yaml
+format = "json"
+
+# Number of lines of code context to display
+context_lines = 3
+
+# Include line numbers in output  
+include_line_numbers = true

@@ -1,0 +1,129 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "PWMK Performance Dashboard",
+    "tags": ["pwmk", "machine-learning", "theory-of-mind"],
+    "style": "dark",
+    "timezone": "browser",
+    "refresh": "5s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "Training Loss",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "pwmk_training_loss",
+            "legendFormat": "Training Loss"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "yAxes": [
+          {
+            "label": "Loss",
+            "logBase": 1,
+            "min": null,
+            "max": null
+          },
+          {
+            "label": "",
+            "logBase": 1,
+            "min": null,
+            "max": null
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Belief Accuracy",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "pwmk_belief_accuracy",
+            "legendFormat": "Belief Accuracy"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "yAxes": [
+          {
+            "label": "Accuracy %",
+            "logBase": 1,
+            "min": 0,
+            "max": 100
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "GPU Utilization",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "nvidia_gpu_utilization_gpu",
+            "legendFormat": "GPU {{instance}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "yAxes": [
+          {
+            "label": "Utilization %",
+            "logBase": 1,
+            "min": 0,
+            "max": 100
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "process_resident_memory_bytes / 1024 / 1024",
+            "legendFormat": "RAM (MB)"
+          },
+          {
+            "expr": "nvidia_gpu_memory_used_bytes / 1024 / 1024",
+            "legendFormat": "GPU Memory (MB)"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "Inference Latency",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "pwmk_inference_duration_seconds",
+            "legendFormat": "Inference Time"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "yAxes": [
+          {
+            "label": "Seconds",
+            "logBase": 1,
+            "min": 0
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Active Experiments",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "pwmk_active_experiments",
+            "legendFormat": "Experiments"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      }
+    ]
+  }
+}
