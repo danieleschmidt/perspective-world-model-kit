@@ -1,0 +1,41 @@
+# Safety policy configuration for dependency vulnerability scanning
+# Used by Safety CLI: https://pyup.io/safety/
+
+# Security policy settings
+security:
+  # Minimum severity level to report (low, medium, high, critical)
+  minimum-severity: medium
+  
+  # Continue scanning after finding vulnerabilities
+  continue-on-error: false
+  
+  # Include development dependencies in scan
+  include-dev: true
+  
+  # Exclude specific vulnerability IDs (use sparingly)
+  ignore-vulnerabilities: []
+  
+  # Exclude specific packages from scanning
+  ignore-packages: []
+
+# Output configuration  
+output:
+  # Output format: text, json, bare
+  format: json
+  
+  # Include full report details
+  full-report: true
+  
+  # Include severity information
+  include-severity: true
+
+# Audit configuration
+audit:
+  # Include transitive dependencies
+  include-transitive: true
+  
+  # Maximum depth for dependency tree analysis
+  max-depth: 10
+  
+  # Include package license information
+  include-licenses: false

@@ -1,0 +1,124 @@
+version: '3.8'
+
+services:
+  # Development environment with Jupyter Lab
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8888:8888"
+      - "6006:6006"  # TensorBoard
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - PYTHONPATH=/app
+      - JUPYTER_ENABLE_LAB=yes
+      - WANDB_MODE=offline
+    command: jupyter lab --ip=0.0.0.0 --allow-root --no-browser
+
+  # Testing environment
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+      - PYTEST_CURRENT_TEST=true
+    command: pytest tests/ -v --cov=pwmk
+
+  # Documentation server
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile.docs
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./docs:/app/docs
+    command: sphinx-autobuild docs docs/_build/html --host 0.0.0.0 --port 8080
+
+  # Monitoring stack
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+
+  # Redis for caching and session storage
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+
+  # PostgreSQL for metadata storage
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=pwmk
+      - POSTGRES_USER=pwmk
+      - POSTGRES_PASSWORD=development
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # MinIO for object storage (S3-compatible)
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password123
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+
+  # Unity ML-Agents headless environment
+  unity-env:
+    image: unityml/unity-environment:latest
+    ports:
+      - "5005:5005"
+    environment:
+      - DISPLAY=:99
+    volumes:
+      - ./unity/builds:/app/builds
+    command: xvfb-run -a ./builds/ToMArena.x86_64
+
+volumes:
+  grafana-storage:
+  redis-data:
+  postgres-data:
+  minio-data:
+
+networks:
+  default:
+    name: pwmk-network
