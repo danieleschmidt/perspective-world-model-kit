@@ -1,0 +1,127 @@
+# Custom Falco Rules for PWMK Security Monitoring
+# Extends default Falco rules with application-specific security policies
+
+- rule: PWMK Unauthorized Network Access
+  desc: Detect unauthorized network connections from PWMK processes
+  condition: >
+    outbound and container and
+    proc.name in (pwmk, python3) and
+    not fd.sip in (allowed_ips) and
+    not fd.sport in (allowed_ports)
+  output: >
+    Unauthorized network access from PWMK 
+    (proc=%proc.name pid=%proc.pid connection=%fd.name)
+  priority: WARNING
+  tags: [network, pwmk]
+
+- rule: PWMK Suspicious Model Loading  
+  desc: Detect suspicious AI model file access patterns
+  condition: >
+    open_read and container and
+    proc.name in (pwmk, python3) and
+    (fd.name glob "*.pkl" or fd.name glob "*.pth" or fd.name glob "*.onnx") and
+    not fd.directory in (/app/models, /tmp, /var/tmp)
+  output: >
+    Suspicious model file access in PWMK
+    (file=%fd.name proc=%proc.name pid=%proc.pid)
+  priority: WARNING
+  tags: [filesystem, ai_model, pwmk]
+
+- rule: PWMK Data Exfiltration Attempt
+  desc: Detect potential data exfiltration from training data
+  condition: >
+    outbound and container and
+    proc.name in (pwmk, python3) and
+    fd.size > 10485760 and  # Files larger than 10MB
+    (fd.name glob "*/data/*" or fd.name glob "*/datasets/*")
+  output: >
+    Potential data exfiltration from PWMK
+    (file=%fd.name size=%fd.size proc=%proc.name connection=%fd.sip:%fd.sport)
+  priority: HIGH
+  tags: [network, data_protection, pwmk]
+
+- rule: PWMK Configuration Tampering
+  desc: Detect unauthorized modification of PWMK configuration files
+  condition: >
+    open_write and container and
+    (fd.name glob "*/config/*" or 
+     fd.name glob "*/.env" or
+     fd.name glob "*/pyproject.toml" or
+     fd.name glob "*/requirements/*") and
+    not proc.name in (pip, pip3, python3, pwmk)
+  output: >
+    Unauthorized configuration modification in PWMK
+    (file=%fd.name proc=%proc.name pid=%proc.pid user=%user.name)
+  priority: HIGH  
+  tags: [filesystem, configuration, pwmk]
+
+- rule: PWMK Memory Dump Attempt
+  desc: Detect attempts to dump process memory containing model data
+  condition: >
+    open_write and container and
+    proc.name in (pwmk, python3) and
+    fd.name glob "*/proc/*/mem" or
+    fd.name glob "*/core.*" and
+    fd.directory in (/tmp, /var/tmp, /app)
+  output: >
+    Memory dump attempt detected in PWMK
+    (file=%fd.name proc=%proc.name pid=%proc.pid)
+  priority: HIGH
+  tags: [memory, data_protection, pwmk]
+
+- rule: PWMK Unexpected Privilege Escalation
+  desc: Detect privilege escalation in PWMK processes  
+  condition: >
+    spawned_process and container and
+    proc.pname in (pwmk, python3) and
+    (proc.name in (su, sudo, chmod, chown) or
+     proc.args contains "chmod 777" or
+     proc.args contains "/bin/sh")
+  output: >
+    Privilege escalation attempt in PWMK
+    (proc=%proc.name pproc=%proc.pname cmdline=%proc.cmdline)
+  priority: HIGH
+  tags: [privilege_escalation, pwmk]
+
+- rule: PWMK GPU Resource Abuse
+  desc: Detect unauthorized GPU resource usage
+  condition: >
+    spawned_process and container and
+    proc.name in (pwmk, python3) and
+    (proc.env contains "CUDA_VISIBLE_DEVICES" or
+     proc.cmdline contains "gpu" or
+     proc.cmdline contains "cuda") and
+    not user.name in (pwmk_user, app_user)
+  output: >
+    Unauthorized GPU access in PWMK
+    (proc=%proc.name user=%user.name cmdline=%proc.cmdline)
+  priority: MEDIUM
+  tags: [resource_abuse, gpu, pwmk]
+
+# Custom macros for PWMK-specific conditions
+- macro: pwmk_processes
+  condition: proc.name in (pwmk, python3)
+
+- macro: allowed_ips
+  condition: >
+    fd.sip in ("127.0.0.1", "::1", "10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16")
+
+- macro: allowed_ports  
+  condition: fd.sport in (80, 443, 8080, 8443, 6006, 9090)
+
+- macro: sensitive_files
+  condition: >
+    fd.name glob "*/models/*" or
+    fd.name glob "*/data/*" or  
+    fd.name glob "*/config/*" or
+    fd.name glob "*/.env*"
+
+# Lists for dynamic rule updates
+- list: pwmk_binaries
+  items: [pwmk, python3, pip, pip3]
+
+- list: model_extensions
+  items: [.pkl, .pth, .onnx, .h5, .pb, .tflite]
+
+- list: trusted_registries
+  items: [docker.io, gcr.io, quay.io]

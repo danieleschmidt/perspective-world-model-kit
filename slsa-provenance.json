@@ -1,0 +1,84 @@
+{
+  "_type": "https://in-toto.io/Statement/v0.1",
+  "predicateType": "https://slsa.dev/provenance/v0.2",
+  "subject": [
+    {
+      "name": "perspective-world-model-kit",
+      "digest": {
+        "sha256": "placeholder_artifact_hash"
+      }
+    }
+  ],
+  "predicate": {
+    "builder": {
+      "id": "https://github.com/actions/runner"
+    },
+    "buildType": "https://github.com/Attestations/GitHubActionsWorkflow@v1",
+    "invocation": {
+      "configSource": {
+        "uri": "git+https://github.com/your-org/perspective-world-model-kit",
+        "digest": {
+          "sha1": "placeholder_commit_hash"
+        },
+        "entryPoint": ".github/workflows/build.yml"
+      },
+      "parameters": {
+        "python_version": "3.11",
+        "build_type": "release"
+      },
+      "environment": {
+        "github_actor": "github-actions",
+        "github_run_id": "placeholder_run_id",
+        "github_ref": "refs/heads/main"
+      }
+    },
+    "metadata": {
+      "buildInvocationId": "placeholder_build_id",
+      "buildStartedOn": "2024-01-01T00:00:00Z",
+      "buildFinishedOn": "2024-01-01T00:30:00Z",
+      "completeness": {
+        "parameters": true,
+        "environment": true,
+        "materials": true
+      },
+      "reproducible": true
+    },
+    "materials": [
+      {
+        "uri": "git+https://github.com/your-org/perspective-world-model-kit",
+        "digest": {
+          "sha1": "placeholder_source_hash"
+        }
+      }
+    ],
+    "buildConfig": {
+      "version": 1,
+      "steps": [
+        {
+          "name": "checkout",
+          "command": ["git", "checkout", "$GITHUB_SHA"]
+        },
+        {
+          "name": "setup-python",
+          "command": ["setup-python", "3.11"]
+        },
+        {
+          "name": "install-dependencies",
+          "command": ["pip", "install", "-e", ".[dev]"]
+        },
+        {
+          "name": "run-tests",
+          "command": ["pytest", "tests/"]
+        },
+        {
+          "name": "security-scan",
+          "command": ["bandit", "-r", "pwmk/"]
+        },
+        {
+          "name": "build-package",
+          "command": ["python", "-m", "build"]
+        }
+      ]
+    }
+  }
+}

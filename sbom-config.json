@@ -1,0 +1,26 @@
+{
+  "format": "spdx-json",
+  "output": "dist/sbom.spdx.json",
+  "components": {
+    "include_dev_dependencies": false,
+    "include_transitive": true,
+    "vulnerability_scanning": true
+  },
+  "metadata": {
+    "supplier": "Organization: Your Organization",
+    "license_concluded": "Apache-2.0",
+    "copyright_text": "Copyright 2024 Your Organization"
+  },
+  "generation": {
+    "tools": ["cyclonedx-python", "syft"],
+    "verification": true,
+    "signing": {
+      "enabled": true,
+      "keyring": "cosign"
+    }
+  },
+  "compliance": {
+    "frameworks": ["SLSA", "SSDF"],
+    "attestation": true
+  }
+}
