@@ -1,0 +1,225 @@
+# Chaos Engineering Test Suite for PWMK
+# Tests system resilience under various failure conditions
+
+chaos_experiments:
+  
+  # Network chaos tests
+  network_chaos:
+    - name: "network_partition"
+      description: "Simulate network partitions between agents"
+      type: "network"
+      config:
+        duration: "60s"
+        target_pods: "app=pwmk"
+        partition_percentage: 50
+        recovery_time: "30s"
+      
+    - name: "network_latency"
+      description: "Inject network latency into agent communications"
+      type: "network"
+      config:
+        duration: "120s"
+        target_pods: "app=pwmk"
+        latency: "500ms"
+        jitter: "100ms"
+        
+    - name: "packet_loss"
+      description: "Introduce packet loss in multi-agent scenarios"
+      type: "network"
+      config:
+        duration: "90s"
+        target_pods: "app=pwmk"
+        loss_percentage: 10
+        
+  # Resource chaos tests
+  resource_chaos:
+    - name: "memory_pressure"
+      description: "Apply memory pressure to world model training"
+      type: "stress"
+      config:
+        duration: "300s"
+        target_pods: "app=pwmk,component=training"
+        memory_percentage: 80
+        
+    - name: "cpu_throttling"
+      description: "Throttle CPU during belief reasoning"
+      type: "stress"
+      config:
+        duration: "180s"
+        target_pods: "app=pwmk,component=reasoning"
+        cpu_percentage: 25
+        
+    - name: "disk_io_delay"
+      description: "Introduce disk I/O delays during model loading"
+      type: "io"
+      config:
+        duration: "120s"
+        target_pods: "app=pwmk"
+        delay: "100ms"
+        
+  # Application chaos tests
+  application_chaos:
+    - name: "belief_store_corruption"
+      description: "Simulate belief store data corruption"
+      type: "application"
+      config:
+        duration: "60s"
+        target: "belief_store"
+        corruption_rate: 0.05
+        
+    - name: "model_weight_perturbation"
+      description: "Inject noise into neural network weights"
+      type: "application"
+      config:
+        duration: "120s"
+        target: "world_model"
+        noise_level: 0.01
+        layers: ["dynamics_model", "belief_head"]
+        
+    - name: "agent_timeout"
+      description: "Simulate agent communication timeouts"
+      type: "application"
+      config:
+        duration: "90s"
+        target: "tom_agents"
+        timeout_probability: 0.3
+        
+  # Dependency chaos tests
+  dependency_chaos:
+    - name: "database_unavailable"
+      description: "Make database temporarily unavailable"
+      type: "service"
+      config:
+        duration: "180s"
+        target_service: "postgres"
+        failure_mode: "unavailable"
+        
+    - name: "gpu_memory_fragmentation"
+      description: "Fragment GPU memory during training"
+      type: "gpu"
+      config:
+        duration: "240s"
+        target_pods: "app=pwmk,gpu=true"
+        fragmentation_level: "high"
+        
+    - name: "external_api_failure"
+      description: "Simulate external API failures"
+      type: "http"
+      config:
+        duration: "120s"
+        target_endpoints: 
+          - "https://api.unity.com/ml-agents"
+          - "https://huggingface.co/models"
+        failure_rate: 0.5
+
+# Test scenarios combining multiple chaos types
+chaos_scenarios:
+  
+  - name: "multi_agent_stress_test"
+    description: "Combined stress test for multi-agent scenarios"
+    duration: "600s"
+    experiments:
+      - network_latency
+      - memory_pressure
+      - agent_timeout
+    success_criteria:
+      - agents_responsive: ">80%"
+      - belief_consistency: ">90%"
+      - planning_success_rate: ">70%"
+      
+  - name: "training_resilience_test"
+    description: "Test training pipeline resilience"
+    duration: "900s"
+    experiments:
+      - cpu_throttling
+      - disk_io_delay
+      - model_weight_perturbation
+    success_criteria:
+      - training_completion: true
+      - model_convergence: true
+      - checkpoint_integrity: true
+      
+  - name: "belief_reasoning_chaos"
+    description: "Test belief system under chaos"
+    duration: "300s"
+    experiments:
+      - belief_store_corruption
+      - network_partition
+      - memory_pressure
+    success_criteria:
+      - belief_queries_successful: ">85%"
+      - reasoning_accuracy: ">75%"
+      - recovery_time: "<60s"
+
+# Monitoring and observability during chaos tests
+monitoring:
+  metrics:
+    - name: "agent_response_time"
+      query: "histogram_quantile(0.95, pwmk_agent_response_time)"
+      threshold: "<1000ms"
+      
+    - name: "belief_store_queries_per_second"
+      query: "rate(pwmk_belief_queries_total[5m])"
+      threshold: ">10"
+      
+    - name: "world_model_inference_time"
+      query: "histogram_quantile(0.99, pwmk_inference_duration)"
+      threshold: "<500ms"
+      
+    - name: "memory_usage"
+      query: "pwmk_memory_usage_bytes / pwmk_memory_limit_bytes"
+      threshold: "<0.9"
+      
+  alerts:
+    - name: "chaos_test_failure"
+      condition: "any success_criteria violated"
+      action: "stop_experiment"
+      notification: "slack://chaos-engineering"
+      
+    - name: "system_unresponsive"
+      condition: "no metrics for 60s"
+      action: "emergency_stop"
+      notification: "pagerduty://on-call"
+
+# Recovery procedures
+recovery:
+  automatic:
+    - name: "restart_failed_pods"
+      trigger: "pod_failure_rate > 0.5"
+      action: "kubectl rollout restart"
+      
+    - name: "clear_corrupted_cache"
+      trigger: "cache_corruption_detected"
+      action: "redis-cli flushall"
+      
+    - name: "restore_backup"
+      trigger: "data_integrity_failure"
+      action: "restore_from_latest_backup"
+      
+  manual:
+    - name: "full_system_restart"
+      description: "Complete system restart procedure"
+      steps:
+        - "Stop all PWMK services"
+        - "Clear temporary data"
+        - "Restore from backup if needed"
+        - "Restart services in order"
+        - "Verify system health"
+
+# Reporting and analysis
+reporting:
+  format: "json"
+  include:
+    - experiment_results
+    - metric_trends
+    - failure_analysis
+    - recovery_performance
+    - improvement_recommendations
+    
+  export:
+    - type: "prometheus"
+      endpoint: "http://prometheus:9090"
+    - type: "grafana"
+      dashboard: "chaos-engineering-results"
+    - type: "s3"
+      bucket: "chaos-test-results"

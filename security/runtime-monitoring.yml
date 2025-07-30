@@ -1,0 +1,155 @@
+# Runtime Security Monitoring Configuration
+# Integrates with Falco, Sysdig, and other runtime security tools
+
+runtime_security:
+  enabled: true
+  
+  # Falco configuration for container runtime security
+  falco:
+    enabled: true
+    rules_file: "/etc/falco/falco_rules.yaml"
+    custom_rules: "security/falco-custom-rules.yaml"
+    outputs:
+      - type: "syslog"
+        priority: "LOG_WARNING"
+      - type: "webhook"
+        url: "http://monitoring:8080/alerts/falco"
+      - type: "file"
+        filename: "/var/log/falco/events.log"
+    
+    # Alert on suspicious activities
+    alerts:
+      - name: "Unexpected network activity"
+        condition: "outbound and not proc.name in (allowed_processes)"
+        priority: "HIGH"
+      
+      - name: "File system modifications"
+        condition: "write and fd.directory in (/etc, /usr/bin, /usr/sbin)"
+        priority: "MEDIUM"
+      
+      - name: "Privilege escalation attempts"
+        condition: "spawned_process and proc.pname exists and proc.args contains sudo"
+        priority: "HIGH"
+
+  # Network security monitoring  
+  network_monitoring:
+    enabled: true
+    tools:
+      - name: "suricata"
+        config: "security/suricata.yaml"
+        rules: "security/suricata-rules/"
+      
+    traffic_analysis:
+      - suspicious_dns_queries
+      - unusual_port_usage
+      - data_exfiltration_patterns
+      - lateral_movement_detection
+
+  # Process monitoring
+  process_monitoring:
+    enabled: true
+    baseline_learning: true
+    whitelist_mode: false
+    
+    monitors:
+      - executable_integrity
+      - library_loading
+      - system_call_monitoring
+      - parent_child_relationships
+
+  # File integrity monitoring
+  file_integrity:
+    enabled: true
+    paths:
+      - path: "/etc"
+        recursive: true
+        exclude: ["*.tmp", "*.log"]
+      - path: "/usr/bin"
+        recursive: false
+      - path: "/usr/sbin" 
+        recursive: false
+      - path: "/app"
+        recursive: true
+        exclude: ["logs/", "tmp/"]
+    
+    hash_algorithm: "sha256"
+    real_time: true
+    
+  # Vulnerability scanning
+  vulnerability_scanning:
+    runtime_scanning: true
+    scan_interval: "24h"
+    tools:
+      - name: "trivy"
+        type: "container"
+        severity_threshold: "HIGH"
+      - name: "grype"
+        type: "filesystem"
+        severity_threshold: "MEDIUM"
+    
+    auto_remediation:
+      enabled: false  # Set to true for automated patching
+      dry_run: true
+
+  # Compliance monitoring
+  compliance:
+    frameworks:
+      - "CIS_Docker_Benchmark"
+      - "NIST_800-53"
+      - "SOC2_Type2"
+    
+    continuous_monitoring: true
+    report_interval: "weekly"
+    
+# Integration with monitoring stack
+monitoring_integration:
+  prometheus:
+    enabled: true
+    metrics_port: 9090
+    security_metrics:
+      - security_events_total
+      - vulnerability_count
+      - compliance_score
+      - runtime_violations
+  
+  grafana:
+    enabled: true
+    dashboard: "security/grafana-security-dashboard.json"
+    
+  alertmanager:
+    enabled: true
+    routing:
+      security_team: "security-alerts@company.com"
+      ops_team: "ops-alerts@company.com"
+      
+# Response automation
+incident_response:
+  enabled: true
+  
+  automated_responses:
+    - trigger: "privilege_escalation"
+      action: "isolate_container"
+      severity: "high"
+    
+    - trigger: "malware_detected"
+      action: "terminate_process"
+      severity: "critical"
+    
+    - trigger: "data_exfiltration"
+      action: "block_network"
+      severity: "critical"
+  
+  playbooks:
+    - name: "container_compromise"
+      steps:
+        - "isolate_container"
+        - "collect_forensics"
+        - "notify_security_team"
+        - "initiate_incident_response"
+    
+    - name: "vulnerability_exploitation"
+      steps:
+        - "patch_vulnerability"
+        - "restart_services"
+        - "verify_mitigation"
+        - "update_security_baseline"
