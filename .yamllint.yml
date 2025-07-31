@@ -1,0 +1,16 @@
+---
+# YAML linting configuration for pre-commit hooks
+extends: default
+
+rules:
+  line-length:
+    max: 120
+    level: warning
+  indentation:
+    spaces: 2
+  comments-indentation: disable
+  comments:
+    min-spaces-from-content: 2
+  document-start: disable
+  truthy:
+    allowed-values: ['true', 'false', 'on', 'off']

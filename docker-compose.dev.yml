@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  pwmk-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: pwmk-development
+    volumes:
+      - .:/home/pwmk/app
+      - pwmk-pip-cache:/home/pwmk/.cache/pip
+      - pwmk-jupyter-data:/home/pwmk/.jupyter
+    ports:
+      - "8888:8888"  # Jupyter Lab
+      - "8080:8080"  # Development server
+      - "6006:6006"  # TensorBoard
+    environment:
+      - PYTHONPATH=/home/pwmk/app
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=development
+    stdin_open: true
+    tty: true
+    networks:
+      - pwmk-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/lab"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  pwmk-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: testing
+    container_name: pwmk-testing
+    volumes:
+      - .:/home/pwmk/app
+      - pwmk-test-cache:/home/pwmk/.cache
+    environment:
+      - PYTHONPATH=/home/pwmk/app
+      - PYTEST_CURRENT_TEST=1
+    command: ["pytest", "tests/", "-v", "--cov=pwmk", "--cov-report=html"]
+    networks:
+      - pwmk-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: pwmk-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - pwmk-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: pwmk-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=development
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    networks:
+      - pwmk-network
+
+volumes:
+  pwmk-pip-cache:
+  pwmk-jupyter-data:
+  pwmk-test-cache:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  pwmk-network:
+    driver: bridge
