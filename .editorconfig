@@ -1,18 +1,64 @@
-# EditorConfig helps maintain consistent coding styles
+# EditorConfig helps maintain consistent coding styles across IDEs and editors
 # See https://editorconfig.org
 
 root = true
 
+# Default settings for all files
 [*]
-indent_style = space
-indent_size = 4
-end_of_line = lf
 charset = utf-8
-trim_trailing_whitespace = true
+end_of_line = lf
 insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
 
+# Python files
+[*.py]
+indent_size = 4
+max_line_length = 88
+
+# YAML files
 [*.{yml,yaml}]
 indent_size = 2
 
+# JSON files
+[*.json]
+indent_size = 2
+
+# TOML files
+[*.toml]
+indent_size = 2
+
+# Markdown files
 [*.md]
 trim_trailing_whitespace = false
+indent_size = 2
+
+# Shell scripts
+[*.sh]
+indent_size = 2
+
+# Makefile
+[{Makefile,*.mk}]
+indent_style = tab
+indent_size = 4
+
+# Docker files
+[{Dockerfile,*.dockerfile}]
+indent_size = 2
+
+# JavaScript/TypeScript (for potential web components)
+[*.{js,ts,jsx,tsx}]
+indent_size = 2
+
+# Unity files (if using Unity ML-Agents)
+[*.{cs,unity,prefab,mat,asset}]
+indent_size = 4
+
+# Configuration files
+[*.{ini,cfg,conf}]
+indent_size = 2
+
+# Prolog files (for belief reasoning)
+[*.{pl,pro,prolog}]
+indent_size = 2
