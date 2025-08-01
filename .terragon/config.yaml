@@ -1,0 +1,144 @@
+# Terragon Autonomous Value Discovery Configuration
+# For perspective-world-model-kit: Advanced AI Research Repository
+
+# Repository metadata
+repository:
+  name: "perspective-world-model-kit"
+  type: "ai-research"
+  maturity_level: "advanced"  # 85-90% maturity
+  domain: "neuro-symbolic-ai"
+  
+  # AI research specific configuration
+  research_areas:
+    - "theory-of-mind"
+    - "multi-agent-systems"
+    - "neuro-symbolic-learning"
+    - "belief-reasoning"
+    - "epistemic-planning"
+    - "world-models"
+  
+  # Technical stack
+  tech_stack:
+    primary_language: "python"
+    ml_frameworks: ["pytorch", "gymnasium", "pettingzoo"]
+    reasoning_engines: ["prolog", "clingo"]
+    environments: ["unity-ml-agents"]
+
+# Value scoring configuration
+scoring:
+  # Weighted Shortest Job First (WSJF) weights
+  wsjf:
+    business_value_weight: 0.3
+    time_criticality_weight: 0.2
+    risk_reduction_weight: 0.25
+    effort_weight: 0.25
+  
+  # ICE Framework weights  
+  ice:
+    impact_weight: 0.4
+    confidence_weight: 0.3
+    ease_weight: 0.3
+  
+  # Technical debt scoring
+  technical_debt:
+    complexity_weight: 0.25
+    maintainability_weight: 0.25
+    test_coverage_weight: 0.2
+    documentation_weight: 0.15
+    security_weight: 0.15
+
+# Discovery mechanisms
+discovery:
+  # Code analysis settings
+  code_analysis:
+    enabled: true
+    max_complexity: 10
+    min_test_coverage: 80
+    scan_patterns:
+      - "**/*.py"
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.toml"
+    
+    # AI/ML specific patterns
+    ai_patterns:
+      model_files: ["**/*model*.py", "**/models/**/*.py"]
+      training_scripts: ["**/train*.py", "**/training/**/*.py"]
+      evaluation_scripts: ["**/eval*.py", "**/evaluation/**/*.py"]
+      config_files: ["**/config*.py", "**/configs/**/*.py"]
+  
+  # Security scanning
+  security:
+    enabled: true
+    dependency_check: true
+    vulnerability_databases: ["osv", "pypi"]
+    ai_security_checks:
+      - "model_serialization_safety"
+      - "data_poisoning_detection"
+      - "adversarial_robustness"
+  
+  # Performance analysis
+  performance:
+    enabled: true
+    neural_network_optimization: true
+    memory_profiling: true
+    compute_efficiency: true
+    gpu_utilization: true
+  
+  # Documentation analysis
+  documentation:
+    enabled: true
+    api_coverage: true
+    research_paper_alignment: true
+    tutorial_completeness: true
+    example_quality: true
+
+# Continuous execution settings
+execution:
+  # Run frequency
+  schedule:
+    full_scan: "weekly"
+    incremental: "daily"
+    post_merge: true
+  
+  # Thresholds for automatic issue creation
+  thresholds:
+    critical_debt_score: 80
+    security_vulnerability_severity: "medium"
+    performance_regression: 20  # percent
+    coverage_drop: 5  # percent
+  
+  # AI research specific triggers
+  research_triggers:
+    new_model_architecture: true
+    benchmark_performance_change: true
+    paper_publication_opportunity: true
+    conference_deadline_approach: true
+
+# Output configuration  
+output:
+  backlog_file: "BACKLOG.md"
+  reports_dir: ".terragon/reports"
+  metrics_file: ".terragon/metrics.json"
+  
+  # Prioritization display
+  display:
+    max_items: 50
+    group_by_category: true
+    show_effort_estimates: true
+    show_confidence_scores: true
+
+# Integration settings
+integrations:
+  github:
+    create_issues: false  # Set to true when ready
+    issue_labels: ["terragon", "value-discovery"]
+    milestone_integration: true
+  
+  monitoring:
+    prometheus_metrics: true
+    grafana_dashboard: true
+    
+  notifications:
+    slack_webhook: null  # Configure as needed
+    email_alerts: false
