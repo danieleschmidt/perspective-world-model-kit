@@ -1,0 +1,361 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PWMK: Install Development Dependencies",
+      "type": "shell",
+      "command": "pip",
+      "args": [
+        "install",
+        "-e",
+        ".[dev,unity,prolog]"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Run All Tests",
+      "type": "shell",
+      "command": "pytest",
+      "args": [
+        "tests/",
+        "-v",
+        "--cov=pwmk",
+        "--cov-report=html",
+        "--cov-report=term-missing"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Run Unit Tests",
+      "type": "shell",
+      "command": "pytest",
+      "args": [
+        "tests/unit/",
+        "-v",
+        "-m",
+        "not slow"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Run Integration Tests",
+      "type": "shell",
+      "command": "pytest",
+      "args": [
+        "tests/integration/",
+        "-v",
+        "-m",
+        "integration"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Format Code",
+      "type": "shell",
+      "command": "black",
+      "args": [
+        "pwmk/",
+        "tests/",
+        "scripts/",
+        "--line-length=88"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Sort Imports",
+      "type": "shell",
+      "command": "isort",
+      "args": [
+        "pwmk/",
+        "tests/",
+        "scripts/",
+        "--profile=black"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Lint Code",
+      "type": "shell",
+      "command": "flake8",
+      "args": [
+        "pwmk/",
+        "tests/",
+        "scripts/",
+        "--max-line-length=88"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$flake8"
+      ]
+    },
+    {
+      "label": "PWMK: Type Check",
+      "type": "shell",
+      "command": "mypy",
+      "args": [
+        "pwmk/",
+        "--config-file=pyproject.toml"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$mypy"
+      ]
+    },
+    {
+      "label": "PWMK: Security Check",
+      "type": "shell",
+      "command": "bandit",
+      "args": [
+        "-r",
+        "pwmk/",
+        "-f",
+        "json",
+        "-o",
+        "bandit-report.json"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Build Documentation",
+      "type": "shell",
+      "command": "sphinx-build",
+      "args": [
+        "-b",
+        "html",
+        "docs/",
+        "docs/_build/html"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Start TensorBoard",
+      "type": "shell",
+      "command": "tensorboard",
+      "args": [
+        "--logdir=logs/",
+        "--port=6006"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Start Jupyter Lab",
+      "type": "shell",
+      "command": "jupyter",
+      "args": [
+        "lab",
+        "--ip=0.0.0.0",
+        "--port=8888",
+        "--no-browser"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Docker Build",
+      "type": "shell",
+      "command": "docker",
+      "args": [
+        "build",
+        "-t",
+        "pwmk:local",
+        "."
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Docker Compose Up",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": [
+        "up",
+        "-d"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Clean Cache",
+      "type": "shell",
+      "command": "find",
+      "args": [
+        ".",
+        "-type", "d",
+        "-name", "__pycache__",
+        "-exec", "rm", "-rf", "{}", "+"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PWMK: Full Code Quality Check",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "PWMK: Format Code",
+        "PWMK: Sort Imports",
+        "PWMK: Lint Code",
+        "PWMK: Type Check",
+        "PWMK: Security Check"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ]
+}
