@@ -58,18 +58,26 @@ def main(args: Optional[list] = None) -> int:
 
 def _train_command(args) -> int:
     """Handle train command."""
-    print("Training world model...")
-    print(f"Config: {args.config}")
-    print(f"Data: {args.data}")
-    return 0
+    try:
+        print("Training world model...")
+        print(f"Config: {args.config}")
+        print(f"Data: {args.data}")
+        return 0
+    except Exception as e:
+        print(f"Error during training: {e}")
+        return 1
 
 
 def _eval_command(args) -> int:
     """Handle evaluation command."""
-    print("Evaluating model...")
-    print(f"Model: {args.model}")
-    print(f"Environment: {args.env}")
-    return 0
+    try:
+        print("Evaluating model...")
+        print(f"Model: {args.model}")
+        print(f"Environment: {args.env}")
+        return 0
+    except Exception as e:
+        print(f"Error during evaluation: {e}")
+        return 1
 
 
 def _demo_command(args) -> int:

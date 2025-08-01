@@ -1,0 +1,53 @@
+{
+  "technical_debt": {
+    "analyzer_name": "TechnicalDebtAnalyzer",
+    "items_count": 9,
+    "metadata": {
+      "files_analyzed": 19,
+      "complexity_violations": 0,
+      "code_smells": 0,
+      "ai_specific_issues": 9
+    },
+    "execution_time": 0.09250998497009277
+  },
+  "security": {
+    "analyzer_name": "SecurityAnalyzer",
+    "items_count": 2,
+    "metadata": {
+      "dependency_vulnerabilities": 2,
+      "code_security_issues": 0,
+      "ai_security_concerns": 0
+    },
+    "execution_time": 0.044840097427368164
+  },
+  "performance": {
+    "analyzer_name": "PerformanceAnalyzer",
+    "items_count": 1,
+    "metadata": {
+      "neural_network_optimizations": 1,
+      "memory_optimizations": 0,
+      "compute_optimizations": 0
+    },
+    "execution_time": 0.007199525833129883
+  },
+  "documentation": {
+    "analyzer_name": "DocumentationAnalyzer",
+    "items_count": 3,
+    "metadata": {
+      "missing_docstrings": 1,
+      "api_coverage_gaps": 0,
+      "research_doc_gaps": 2
+    },
+    "execution_time": 0.03603482246398926
+  },
+  "test_coverage": {
+    "analyzer_name": "TestCoverageAnalyzer",
+    "items_count": 4,
+    "metadata": {
+      "untested_modules": 4,
+      "missing_integration_tests": 0,
+      "ai_specific_tests": 0
+    },
+    "execution_time": 0.011704444885253906
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-08-01T12:13:36.666589",
+  "total_items": 19,
+  "priority_distribution": {
+    "low": 19
+  },
+  "category_distribution": {
+    "technical_debt": 9,
+    "documentation": 3,
+    "performance": 1,
+    "testing": 4,
+    "security": 2
+  },
+  "average_scores": {
+    "final_score": 4.212166666666667,
+    "wsjf_score": 9.967543859649123,
+    "ice_score": 6.984210526315789,
+    "technical_debt_score": 4.378947368421053,
+    "research_value_score": 3.2868421052631582
+  },
+  "total_estimated_hours": 171.0
+}
