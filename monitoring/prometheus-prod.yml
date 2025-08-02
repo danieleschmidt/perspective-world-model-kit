@@ -1,0 +1,131 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'pwmk-production'
+    environment: 'prod'
+
+rule_files:
+  - "alert_rules.yml"
+  - "recording_rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+      timeout: 10s
+      api_version: v2
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+
+  # PWMK application metrics
+  - job_name: 'pwmk-app'
+    static_configs:
+      - targets: ['app:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'pwmk-app'
+
+  # System metrics via node_exporter
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 15s
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'production-server'
+
+  # Redis monitoring
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 15s
+
+  # PostgreSQL monitoring
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 30s
+
+  # NGINX monitoring
+  - job_name: 'nginx-exporter'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+    scrape_interval: 15s
+
+  # Docker container metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 15s
+    metrics_path: '/metrics'
+
+  # GPU metrics (if available)
+  - job_name: 'nvidia-gpu'
+    static_configs:
+      - targets: ['nvidia-gpu-exporter:9400']
+    scrape_interval: 5s
+    honor_labels: true
+
+  # Application-specific ML metrics
+  - job_name: 'pwmk-ml-metrics'
+    static_configs:
+      - targets: ['app:8000']
+    metrics_path: '/ml-metrics'
+    scrape_interval: 30s
+    params:
+      collect: ['training_metrics', 'inference_metrics', 'model_metrics']
+
+  # Belief system metrics
+  - job_name: 'pwmk-belief-metrics'
+    static_configs:
+      - targets: ['app:8000']
+    metrics_path: '/belief-metrics'
+    scrape_interval: 60s
+
+  # Unity environment metrics (if enabled)
+  - job_name: 'unity-metrics'
+    static_configs:
+      - targets: ['unity-env:9500']
+    scrape_interval: 10s
+    honor_labels: true
+
+  # Custom application endpoints
+  - job_name: 'pwmk-custom'
+    file_sd_configs:
+      - files:
+          - '/etc/prometheus/custom_targets.yml'
+        refresh_interval: 5m
+
+# Remote write configuration for long-term storage
+remote_write:
+  - url: "http://victoriametrics:8428/api/v1/write"
+    queue_config:
+      max_samples_per_send: 10000
+      batch_send_deadline: 5s
+      max_shards: 200
+
+# Remote read configuration
+remote_read:
+  - url: "http://victoriametrics:8428/api/v1/read"
+    read_recent: true
+
+# Storage configuration
+storage:
+  tsdb:
+    retention.time: 30d
+    retention.size: 50GB
+    wal-compression: true

@@ -1,0 +1,108 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: email-alerts
+    receivers:
+      - uid: email-receiver
+        type: email
+        settings:
+          addresses: admin@pwmk.org;alerts@pwmk.org
+          subject: '[PWMK] {{ .GroupLabels.alertname }} - {{ .Status }}'
+          message: |
+            {{ range .Alerts }}
+            **Alert:** {{ .Annotations.summary }}
+            **Description:** {{ .Annotations.description }}
+            **Severity:** {{ .Labels.severity }}
+            **Component:** {{ .Labels.component }}
+            **Instance:** {{ .Labels.instance }}
+            **Started:** {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+            {{ if .Annotations.runbook_url }}**Runbook:** {{ .Annotations.runbook_url }}{{ end }}
+            {{ end }}
+
+  - orgId: 1
+    name: slack-alerts
+    receivers:
+      - uid: slack-receiver
+        type: slack
+        settings:
+          url: ${SLACK_WEBHOOK_URL}
+          channel: '#pwmk-alerts'
+          username: 'PWMK Grafana'
+          iconEmoji: ':warning:'
+          title: '[PWMK] {{ .GroupLabels.alertname }}'
+          text: |
+            {{ range .Alerts }}
+            *{{ .Annotations.summary }}*
+            {{ .Annotations.description }}
+            Severity: `{{ .Labels.severity }}` | Component: `{{ .Labels.component }}`
+            {{ if .Annotations.runbook_url }}[Runbook]({{ .Annotations.runbook_url }}){{ end }}
+            {{ end }}
+
+  - orgId: 1
+    name: pagerduty-critical
+    receivers:
+      - uid: pagerduty-receiver
+        type: pagerduty
+        settings:
+          integrationKey: ${PAGERDUTY_INTEGRATION_KEY}
+          severity: '{{ .GroupLabels.severity }}'
+          component: '{{ .GroupLabels.component }}'
+          group: 'PWMK'
+          class: 'infrastructure'
+          customDetails:
+            environment: production
+            cluster: pwmk-prod
+
+  - orgId: 1
+    name: webhook-alerts
+    receivers:
+      - uid: webhook-receiver
+        type: webhook
+        settings:
+          url: ${WEBHOOK_URL}
+          httpMethod: POST
+          maxAlerts: 10
+          message: |
+            {
+              "alerts": {{ .Alerts | len }},
+              "status": "{{ .Status }}",
+              "groupKey": "{{ .GroupKey }}",
+              "groupLabels": {{ .GroupLabels | toJson }},
+              "commonAnnotations": {{ .CommonAnnotations | toJson }},
+              "alerts": [
+                {{ range .Alerts }}
+                {
+                  "status": "{{ .Status }}",
+                  "labels": {{ .Labels | toJson }},
+                  "annotations": {{ .Annotations | toJson }},
+                  "startsAt": "{{ .StartsAt }}",
+                  "endsAt": "{{ .EndsAt }}",
+                  "generatorURL": "{{ .GeneratorURL }}"
+                }{{ if not (eq . (index $.Alerts (sub (len $.Alerts) 1))) }},{{ end }}
+                {{ end }}
+              ]
+            }
+
+  - orgId: 1
+    name: msteams-alerts
+    receivers:
+      - uid: msteams-receiver
+        type: teams
+        settings:
+          url: ${MSTEAMS_WEBHOOK_URL}
+          title: '[PWMK] Alert Notification'
+          message: |
+            {{ range .Alerts }}
+            **{{ .Annotations.summary }}**
+            
+            {{ .Annotations.description }}
+            
+            - **Severity:** {{ .Labels.severity }}
+            - **Component:** {{ .Labels.component }}
+            - **Instance:** {{ .Labels.instance }}
+            - **Started:** {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+            {{ if .Annotations.runbook_url }}
+            - **Runbook:** [View Runbook]({{ .Annotations.runbook_url }})
+            {{ end }}
+            {{ end }}

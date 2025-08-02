@@ -1,0 +1,144 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "PWMK: Debug Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": false,
+      "stopOnEntry": false
+    },
+    {
+      "name": "PWMK: Run Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "tests/",
+        "-v",
+        "--tb=short"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "PWMK: Debug Test",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "${file}",
+        "-v",
+        "--tb=short",
+        "-s"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "PWMK: CLI",
+      "type": "python",
+      "request": "launch",
+      "module": "pwmk.cli",
+      "args": [
+        "--help"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "PWMK: Training Example",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/basic_training.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "PWMK_DEBUG": "true"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "PWMK: Unity Environment",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/unity_integration.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "UNITY_NO_GRAPHICS": "true"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "PWMK: Belief Reasoning Demo",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/belief_reasoning.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "PWMK_BELIEF_BACKEND": "prolog"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "PWMK: Performance Benchmark",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/performance_benchmark.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "PWMK_ENABLE_PROFILING": "true"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "PWMK: Docker Debug",
+      "type": "python",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "justMyCode": false,
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/app"
+        }
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "PWMK: Full Test Suite",
+      "configurations": [
+        "PWMK: Run Tests"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+apiVersion: 1
+
+policies:
+  - orgId: 1
+    receiver: email-alerts
+    group_by: ['alertname', 'component']
+    group_wait: 30s
+    group_interval: 5m
+    repeat_interval: 12h
+    routes:
+      # Critical alerts go to PagerDuty and Slack immediately
+      - receiver: pagerduty-critical
+        matchers:
+          - severity = critical
+        group_wait: 0s
+        repeat_interval: 5m
+        routes:
+          - receiver: slack-alerts
+            matchers:
+              - severity = critical
+            group_wait: 0s
+            
+      # Warning alerts go to Slack with some delay
+      - receiver: slack-alerts
+        matchers:
+          - severity = warning
+        group_wait: 2m
+        repeat_interval: 1h
+        
+      # Info alerts only to email with longer intervals
+      - receiver: email-alerts
+        matchers:
+          - severity = info
+        group_wait: 10m
+        repeat_interval: 24h
+        
+      # ML-specific alerts
+      - receiver: slack-alerts
+        matchers:
+          - component =~ "ml_.*"
+        group_wait: 1m
+        repeat_interval: 30m
+        
+      # Database alerts
+      - receiver: pagerduty-critical
+        matchers:
+          - component = database
+          - severity =~ "critical|warning"
+        group_wait: 0s
+        repeat_interval: 15m
+        
+      # System alerts
+      - receiver: email-alerts
+        matchers:
+          - component = system
+        group_wait: 5m
+        repeat_interval: 2h
+        routes:
+          # High severity system alerts also go to Slack
+          - receiver: slack-alerts
+            matchers:
+              - component = system
+              - severity =~ "critical|warning"
+            group_wait: 1m
+            
+      # Experiment alerts
+      - receiver: email-alerts
+        matchers:
+          - component = experiments
+        group_wait: 10m
+        repeat_interval: 6h
+        
+      # Belief system alerts
+      - receiver: slack-alerts
+        matchers:
+          - component = belief_system
+        group_wait: 2m
+        repeat_interval: 1h
+        
+      # Data quality alerts
+      - receiver: webhook-alerts
+        matchers:
+          - component =~ "data_.*"
+        group_wait: 5m
+        repeat_interval: 2h
+        
+    # Silence during maintenance windows
+    mute_time_intervals:
+      - maintenance-window
+      
+  - orgId: 1
+    receiver: msteams-alerts
+    matchers:
+      - team = research
+    group_by: ['alertname']
+    group_wait: 5m
+    group_interval: 10m
+    repeat_interval: 6h
+
+muteTimeIntervals:
+  - name: maintenance-window
+    time_intervals:
+      - times:
+          - start_time: '02:00'
+            end_time: '04:00'
+        weekdays: ['sunday']
+        months: ['1:12']
+        
+  - name: weekend-non-critical
+    time_intervals:
+      - times:
+          - start_time: '18:00'
+            end_time: '09:00'
+        weekdays: ['saturday', 'sunday']
+        months: ['1:12']

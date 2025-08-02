@@ -1,0 +1,245 @@
+{
+  "project": {
+    "name": "perspective-world-model-kit",
+    "description": "Neuro-symbolic world models with Theory of Mind for multi-agent AI systems",
+    "version": "1.0.0",
+    "repository": "https://github.com/danieleschmidt/perspective-world-model-kit",
+    "license": "Apache-2.0",
+    "language": "Python",
+    "created_at": "2024-01-01",
+    "last_updated": "2024-08-01"
+  },
+  "metrics": {
+    "code_quality": {
+      "test_coverage": {
+        "target": 90,
+        "current": 85,
+        "trend": "increasing",
+        "last_measured": "2024-08-01"
+      },
+      "code_complexity": {
+        "target": "low",
+        "current": "medium",
+        "cyclomatic_complexity": 12.5,
+        "last_measured": "2024-08-01"
+      },
+      "technical_debt": {
+        "target": "low",
+        "current": "medium",
+        "debt_ratio": 15.2,
+        "estimated_hours": 120,
+        "last_measured": "2024-08-01"
+      },
+      "security_score": {
+        "target": 95,
+        "current": 92,
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 1,
+          "medium": 3,
+          "low": 5
+        },
+        "last_scanned": "2024-08-01"
+      }
+    },
+    "development_velocity": {
+      "commits_per_week": {
+        "target": 20,
+        "current": 18,
+        "trend": "stable",
+        "last_4_weeks": [15, 18, 22, 17]
+      },
+      "pull_requests": {
+        "opened_per_week": 8,
+        "merged_per_week": 7,
+        "average_review_time_hours": 24,
+        "average_merge_time_hours": 48
+      },
+      "deployment_frequency": {
+        "target": "daily",
+        "current": "3x_per_week",
+        "deployments_last_month": 12
+      },
+      "lead_time": {
+        "target_hours": 48,
+        "current_hours": 72,
+        "trend": "decreasing"
+      }
+    },
+    "reliability": {
+      "uptime": {
+        "target": 99.9,
+        "current": 99.8,
+        "last_30_days": 99.8,
+        "incidents": 2
+      },
+      "error_rate": {
+        "target": 0.1,
+        "current": 0.15,
+        "last_24_hours": 0.12,
+        "trend": "stable"
+      },
+      "mean_time_to_recovery": {
+        "target_minutes": 30,
+        "current_minutes": 45,
+        "last_incident": "2024-07-28"
+      },
+      "build_success_rate": {
+        "target": 95,
+        "current": 92,
+        "last_50_builds": 46
+      }
+    },
+    "performance": {
+      "response_time": {
+        "target_ms": 500,
+        "current_p95_ms": 650,
+        "current_p99_ms": 1200,
+        "trend": "stable"
+      },
+      "throughput": {
+        "target_rps": 100,
+        "current_rps": 85,
+        "peak_rps": 120
+      },
+      "resource_utilization": {
+        "cpu_target": 70,
+        "cpu_current": 65,
+        "memory_target": 80,
+        "memory_current": 72,
+        "gpu_target": 85,
+        "gpu_current": 78
+      }
+    },
+    "ml_specific": {
+      "model_accuracy": {
+        "target": 0.90,
+        "current": 0.87,
+        "trend": "increasing",
+        "last_evaluation": "2024-08-01"
+      },
+      "belief_accuracy": {
+        "target": 0.85,
+        "current": 0.82,
+        "trend": "stable",
+        "last_evaluation": "2024-08-01"
+      },
+      "training_efficiency": {
+        "target_samples_per_second": 1000,
+        "current_samples_per_second": 850,
+        "gpu_utilization": 78
+      },
+      "experiment_success_rate": {
+        "target": 80,
+        "current": 75,
+        "total_experiments": 150,
+        "successful_experiments": 113
+      }
+    },
+    "community": {
+      "github_stars": {
+        "current": 245,
+        "target": 500,
+        "growth_rate_per_month": 15
+      },
+      "contributors": {
+        "total": 12,
+        "active_last_month": 6,
+        "target": 20
+      },
+      "issues": {
+        "open": 28,
+        "closed": 142,
+        "average_resolution_days": 5.2,
+        "target_resolution_days": 7
+      },
+      "pull_requests": {
+        "open": 8,
+        "merged": 89,
+        "average_review_time_hours": 24
+      },
+      "downloads": {
+        "pypi_monthly": 1250,
+        "docker_pulls": 380,
+        "target_monthly": 2000
+      }
+    },
+    "documentation": {
+      "coverage": {
+        "target": 90,
+        "current": 78,
+        "api_documentation": 85,
+        "user_guides": 70,
+        "examples": 80
+      },
+      "freshness": {
+        "target_days": 30,
+        "oldest_doc_days": 45,
+        "outdated_count": 8
+      }
+    },
+    "dependencies": {
+      "total_count": 45,
+      "outdated_count": 8,
+      "security_vulnerabilities": 4,
+      "license_issues": 0,
+      "last_updated": "2024-07-15"
+    }
+  },
+  "goals": {
+    "q3_2024": {
+      "test_coverage": 90,
+      "github_stars": 400,
+      "model_accuracy": 0.89,
+      "deployment_frequency": "daily"
+    },
+    "q4_2024": {
+      "test_coverage": 95,
+      "github_stars": 600,
+      "model_accuracy": 0.92,
+      "contributors": 18,
+      "pypi_downloads": 3000
+    }
+  },
+  "alerts": {
+    "test_coverage_below_target": {
+      "threshold": 85,
+      "current": 85,
+      "status": "warning"
+    },
+    "high_response_time": {
+      "threshold": 600,
+      "current": 650,
+      "status": "alert"
+    },
+    "security_vulnerabilities": {
+      "threshold": 0,
+      "current": 4,
+      "status": "critical"
+    }
+  },
+  "automation": {
+    "ci_cd": {
+      "enabled": true,
+      "pipeline_success_rate": 92,
+      "average_build_time_minutes": 15
+    },
+    "dependency_updates": {
+      "enabled": true,
+      "frequency": "weekly",
+      "auto_merge_minor": true
+    },
+    "security_scanning": {
+      "enabled": true,
+      "frequency": "daily",
+      "tools": ["bandit", "safety", "trivy", "codeql"]
+    },
+    "performance_monitoring": {
+      "enabled": true,
+      "alerts_configured": true,
+      "dashboards": ["grafana", "datadog"]
+    }
+  },
+  "last_updated": "2024-08-01T12:00:00Z",
+  "next_review": "2024-08-15T12:00:00Z"
+}
