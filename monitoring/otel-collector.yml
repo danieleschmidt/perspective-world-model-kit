@@ -1,0 +1,251 @@
+# OpenTelemetry Collector configuration for PWMK
+# Collects, processes, and exports telemetry data (metrics, logs, traces)
+
+receivers:
+  # OTLP receiver for application traces and metrics
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  # Prometheus receiver for scraping metrics
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'pwmk-app'
+          static_configs:
+            - targets: ['app:8000']
+          scrape_interval: 30s
+          metrics_path: '/metrics'
+
+  # Host metrics receiver
+  hostmetrics:
+    collection_interval: 30s
+    scrapers:
+      cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
+      disk:
+      filesystem:
+        metrics:
+          system.filesystem.utilization:
+            enabled: true
+      load:
+      memory:
+        metrics:
+          system.memory.utilization:
+            enabled: true
+      network:
+      process:
+        mute_process_name_error: true
+        mute_process_exe_error: true
+        mute_process_io_error: true
+
+  # Docker stats receiver
+  docker_stats:
+    endpoint: unix:///var/run/docker.sock
+    collection_interval: 30s
+    timeout: 20s
+    api_version: 1.24
+
+  # File log receiver
+  filelog:
+    include:
+      - /var/log/pwmk/*.log
+      - /var/log/containers/*pwmk*.log
+    start_at: end
+    operators:
+      - type: json_parser
+        id: json_parser
+        timestamp:
+          parse_from: attributes.timestamp
+          layout: '%Y-%m-%d %H:%M:%S'
+      - type: severity_parser
+        id: severity_parser
+        parse_from: attributes.level
+
+  # NVIDIA GPU metrics (if available)
+  gpu:
+    collection_interval: 10s
+
+processors:
+  # Batch processor to reduce overhead
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+    send_batch_max_size: 2048
+
+  # Memory limiter to prevent OOM
+  memory_limiter:
+    limit_mib: 512
+    spike_limit_mib: 128
+    check_interval: 5s
+
+  # Resource processor to add metadata
+  resource:
+    attributes:
+      - key: service.name
+        value: pwmk
+        action: upsert
+      - key: service.version
+        from_attribute: version
+        action: upsert
+      - key: deployment.environment
+        value: production
+        action: upsert
+      - key: k8s.cluster.name
+        value: pwmk-cluster
+        action: upsert
+
+  # Attributes processor for enrichment
+  attributes:
+    actions:
+      - key: http.user_agent
+        action: delete
+      - key: sensitive_data
+        action: delete
+      - key: experiment.id
+        from_attribute: experiment_id
+        action: upsert
+
+  # Probabilistic sampler for traces
+  probabilistic_sampler:
+    sampling_percentage: 10.0
+
+  # Span processor for trace enrichment
+  span:
+    name:
+      from_attributes: ["http.method", "http.route"]
+      separator: " "
+
+  # Filter processor to remove unwanted metrics
+  filter:
+    metrics:
+      exclude:
+        match_type: regexp
+        metric_names:
+          - .*debug.*
+          - .*test.*
+
+  # Transform processor for metric transformations
+  transform:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "PWMK custom metric") where name == "pwmk_custom_metric"
+          - set(unit, "1") where name == "pwmk_belief_accuracy"
+
+exporters:
+  # Prometheus exporter
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: pwmk
+    const_labels:
+      cluster: production
+    metric_relabeling:
+      - source_labels: [__name__]
+        regex: '.*debug.*'
+        action: drop
+
+  # Jaeger exporter for traces
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+
+  # OTLP exporter for external systems
+  otlp:
+    endpoint: https://api.honeycomb.io:443
+    headers:
+      "x-honeycomb-team": "${HONEYCOMB_API_KEY}"
+      "x-honeycomb-dataset": "pwmk-production"
+
+  # Logging exporter for debugging
+  logging:
+    loglevel: info
+    sampling_initial: 5
+    sampling_thereafter: 200
+
+  # File exporter for local storage
+  file:
+    path: /tmp/otel-logs.json
+    rotation:
+      max_megabytes: 100
+      max_days: 7
+      max_backups: 3
+
+  # InfluxDB exporter for metrics
+  influxdb:
+    endpoint: http://influxdb:8086
+    org: pwmk
+    bucket: metrics
+    token: "${INFLUXDB_TOKEN}"
+    timeout: 30s
+
+  # PostgreSQL exporter for structured data
+  postgresql:
+    endpoint: postgres:5432
+    database: pwmk_telemetry
+    username: otel_writer
+    password: "${POSTGRES_OTEL_PASSWORD}"
+    timeout: 30s
+
+extensions:
+  # Health check extension
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+  # pprof extension for profiling
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+  # zpages extension for debugging
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+  # File storage extension
+  file_storage:
+    directory: /tmp/otel-storage
+    timeout: 1s
+
+service:
+  telemetry:
+    logs:
+      level: info
+      development: false
+      sampling:
+        initial: 5
+        thereafter: 200
+    metrics:
+      level: detailed
+      address: 0.0.0.0:8888
+
+  extensions: [health_check, pprof, zpages, file_storage]
+
+  pipelines:
+    # Traces pipeline
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, attributes, probabilistic_sampler, span, batch]
+      exporters: [jaeger, otlp, logging]
+
+    # Metrics pipeline
+    metrics:
+      receivers: [otlp, prometheus, hostmetrics, docker_stats, gpu]
+      processors: [memory_limiter, resource, attributes, filter, transform, batch]
+      exporters: [prometheus, influxdb, logging]
+
+    # Logs pipeline
+    logs:
+      receivers: [otlp, filelog]
+      processors: [memory_limiter, resource, attributes, batch]
+      exporters: [logging, file, postgresql]
+
+    # Internal metrics pipeline
+    metrics/internal:
+      receivers: [prometheus]
+      processors: [memory_limiter, batch]
+      exporters: [prometheus]

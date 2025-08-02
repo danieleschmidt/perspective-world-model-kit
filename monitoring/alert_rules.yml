@@ -1,0 +1,268 @@
+groups:
+  - name: pwmk.application
+    rules:
+      # Application availability
+      - alert: PWMKAppDown
+        expr: up{job="pwmk-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "PWMK application is down"
+          description: "The PWMK application has been down for more than 1 minute."
+          runbook_url: "https://docs.pwmk.org/runbooks/app-down"
+
+      # High error rate
+      - alert: PWMKHighErrorRate
+        expr: rate(http_requests_total{job="pwmk-app",status=~"5.."}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "High error rate in PWMK application"
+          description: "Error rate is {{ $value | humanizePercentage }} over the last 5 minutes."
+
+      # High response time
+      - alert: PWMKHighLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="pwmk-app"}[5m])) > 1
+        for: 10m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "High latency in PWMK application"
+          description: "95th percentile latency is {{ $value }}s over the last 5 minutes."
+
+      # Memory usage
+      - alert: PWMKHighMemoryUsage
+        expr: (process_resident_memory_bytes{job="pwmk-app"} / process_virtual_memory_max_bytes{job="pwmk-app"}) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: application
+        annotations:
+          summary: "High memory usage in PWMK application"
+          description: "Memory usage is {{ $value | humanizePercentage }}."
+
+  - name: pwmk.infrastructure
+    rules:
+      # PostgreSQL down
+      - alert: PostgreSQLDown
+        expr: up{job="postgres-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database has been down for more than 1 minute."
+
+      # High database connections
+      - alert: PostgreSQLHighConnections
+        expr: pg_stat_database_numbackends / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "PostgreSQL connection usage is high"
+          description: "Connection usage is {{ $value | humanizePercentage }}."
+
+      # Redis down
+      - alert: RedisDown
+        expr: up{job="redis-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: cache
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache has been down for more than 1 minute."
+
+      # High Redis memory usage
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "Redis memory usage is high"
+          description: "Redis memory usage is {{ $value | humanizePercentage }}."
+
+  - name: pwmk.system
+    rules:
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }}."
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}."
+
+      # Low disk space
+      - alert: LowDiskSpace
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Low disk space"
+          description: "Disk usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}:{{ $labels.mountpoint }}."
+
+      # High disk I/O wait
+      - alert: HighDiskIOWait
+        expr: irate(node_cpu_seconds_total{mode="iowait"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High disk I/O wait time"
+          description: "I/O wait time is {{ $value | humanizePercentage }} on {{ $labels.instance }}."
+
+  - name: pwmk.ml_specific
+    rules:
+      # Training job failures
+      - alert: PWMKTrainingJobFailed
+        expr: increase(pwmk_training_jobs_failed_total[1h]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          component: ml_training
+        annotations:
+          summary: "PWMK training job failed"
+          description: "{{ $value }} training jobs have failed in the last hour."
+
+      # Model inference errors
+      - alert: PWMKInferenceErrors
+        expr: rate(pwmk_inference_errors_total[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+          component: ml_inference
+        annotations:
+          summary: "High inference error rate"
+          description: "Inference error rate is {{ $value }} errors/second."
+
+      # GPU utilization too low
+      - alert: PWMKLowGPUUtilization
+        expr: nvidia_gpu_utilization_gpu < 10
+        for: 30m
+        labels:
+          severity: info
+          component: gpu
+        annotations:
+          summary: "Low GPU utilization"
+          description: "GPU utilization is {{ $value }}% for more than 30 minutes."
+
+      # GPU memory high usage
+      - alert: PWMKHighGPUMemoryUsage
+        expr: nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: gpu
+        annotations:
+          summary: "High GPU memory usage"
+          description: "GPU memory usage is {{ $value | humanizePercentage }}."
+
+  - name: pwmk.belief_system
+    rules:
+      # Belief reasoning timeout
+      - alert: PWMKBeliefReasoningTimeout
+        expr: rate(pwmk_belief_reasoning_timeouts_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: belief_system
+        annotations:
+          summary: "High belief reasoning timeout rate"
+          description: "Belief reasoning timeout rate is {{ $value }} timeouts/second."
+
+      # Inconsistent beliefs detected
+      - alert: PWMKInconsistentBeliefs
+        expr: increase(pwmk_belief_inconsistencies_total[1h]) > 10
+        for: 0m
+        labels:
+          severity: warning
+          component: belief_system
+        annotations:
+          summary: "Inconsistent beliefs detected"
+          description: "{{ $value }} belief inconsistencies detected in the last hour."
+
+      # Prolog engine errors
+      - alert: PWMKPrologEngineErrors
+        expr: rate(pwmk_prolog_errors_total[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          component: belief_system
+        annotations:
+          summary: "Prolog engine errors"
+          description: "Prolog engine error rate is {{ $value }} errors/second."
+
+  - name: pwmk.experiments
+    rules:
+      # Long-running experiments
+      - alert: PWMKLongRunningExperiment
+        expr: time() - pwmk_experiment_start_time_seconds > 86400  # 24 hours
+        for: 0m
+        labels:
+          severity: info
+          component: experiments
+        annotations:
+          summary: "Long-running experiment detected"
+          description: "Experiment {{ $labels.experiment_id }} has been running for more than 24 hours."
+
+      # Experiment resource usage
+      - alert: PWMKExperimentHighResourceUsage
+        expr: pwmk_experiment_cpu_usage_percent > 90
+        for: 10m
+        labels:
+          severity: warning
+          component: experiments
+        annotations:
+          summary: "High resource usage in experiment"
+          description: "Experiment {{ $labels.experiment_id }} is using {{ $value }}% CPU."
+
+  - name: pwmk.data_quality
+    rules:
+      # Data pipeline failures
+      - alert: PWMKDataPipelineFailure
+        expr: increase(pwmk_data_pipeline_failures_total[1h]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          component: data_pipeline
+        annotations:
+          summary: "Data pipeline failure"
+          description: "{{ $value }} data pipeline failures in the last hour."
+
+      # Missing data detection
+      - alert: PWMKMissingData
+        expr: pwmk_data_completeness_ratio < 0.95
+        for: 15m
+        labels:
+          severity: warning
+          component: data_quality
+        annotations:
+          summary: "Data completeness below threshold"
+          description: "Data completeness is {{ $value | humanizePercentage }}."

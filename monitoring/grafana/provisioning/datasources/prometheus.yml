@@ -1,0 +1,100 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    orgId: 1
+    uid: prometheus
+    url: http://prometheus:9090
+    isDefault: true
+    version: 1
+    editable: true
+    jsonData:
+      httpMethod: POST
+      queryTimeout: 60s
+      timeInterval: 15s
+      exemplarTraceIdDestinations:
+        - name: trace_id
+          datasourceUid: jaeger
+      prometheusType: Prometheus
+      prometheusVersion: 2.40.0
+      cacheLevel: 'High'
+      disableMetricsLookup: false
+      incrementalQuerying: true
+      incrementalQueryOverlapWindow: 10m
+
+  - name: Loki
+    type: loki
+    access: proxy
+    orgId: 1
+    uid: loki
+    url: http://loki:3100
+    version: 1
+    editable: true
+    isDefault: false
+    jsonData:
+      maxLines: 1000
+      derivedFields:
+        - datasourceUid: jaeger
+          matcherRegex: "trace_id=(\\w+)"
+          name: TraceID
+          url: "$${__value.raw}"
+
+  - name: Jaeger
+    type: jaeger
+    access: proxy
+    orgId: 1
+    uid: jaeger
+    url: http://jaeger:16686
+    version: 1
+    editable: true
+    isDefault: false
+    jsonData:
+      tracesToLogs:
+        datasourceUid: loki
+        tags: ['job', 'instance', 'pod', 'namespace']
+        mappedTags: [
+          { key: 'service.name', value: 'service' }
+        ]
+        mapTagNamesEnabled: false
+        spanStartTimeShift: '-1h'
+        spanEndTimeShift: '1h'
+        filterByTraceID: false
+        filterBySpanID: false
+
+  - name: Postgres
+    type: postgres
+    access: proxy
+    orgId: 1
+    uid: postgres
+    url: postgres:5432
+    database: pwmk
+    user: grafana_reader
+    secureJsonData:
+      password: ${POSTGRES_GRAFANA_PASSWORD}
+    version: 1
+    editable: true
+    isDefault: false
+    jsonData:
+      sslmode: disable
+      maxOpenConns: 10
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    orgId: 1
+    uid: influxdb
+    url: http://influxdb:8086
+    database: pwmk_metrics
+    user: grafana
+    secureJsonData:
+      password: ${INFLUXDB_GRAFANA_PASSWORD}
+    version: 1
+    editable: true
+    isDefault: false
+    jsonData:
+      timeInterval: 15s
+      httpMode: GET

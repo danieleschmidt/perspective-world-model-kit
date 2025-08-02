@@ -1,0 +1,209 @@
+groups:
+  - name: pwmk.aggregation
+    interval: 30s
+    rules:
+      # HTTP request rate aggregations
+      - record: pwmk:http_requests:rate1m
+        expr: rate(http_requests_total{job="pwmk-app"}[1m])
+        labels:
+          aggregation: "1m"
+
+      - record: pwmk:http_requests:rate5m
+        expr: rate(http_requests_total{job="pwmk-app"}[5m])
+        labels:
+          aggregation: "5m"
+
+      - record: pwmk:http_requests:rate15m
+        expr: rate(http_requests_total{job="pwmk-app"}[15m])
+        labels:
+          aggregation: "15m"
+
+      # HTTP request duration quantiles
+      - record: pwmk:http_request_duration:p50
+        expr: histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{job="pwmk-app"}[5m]))
+
+      - record: pwmk:http_request_duration:p90
+        expr: histogram_quantile(0.90, rate(http_request_duration_seconds_bucket{job="pwmk-app"}[5m]))
+
+      - record: pwmk:http_request_duration:p95
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="pwmk-app"}[5m]))
+
+      - record: pwmk:http_request_duration:p99
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job="pwmk-app"}[5m]))
+
+  - name: pwmk.ml_metrics
+    interval: 60s
+    rules:
+      # Training metrics aggregations
+      - record: pwmk:training:loss_rate
+        expr: rate(pwmk_training_loss_total[5m])
+
+      - record: pwmk:training:accuracy_avg
+        expr: avg_over_time(pwmk_training_accuracy[5m])
+
+      - record: pwmk:training:throughput
+        expr: rate(pwmk_training_samples_processed_total[5m])
+
+      # Inference metrics
+      - record: pwmk:inference:rate
+        expr: rate(pwmk_inference_requests_total[5m])
+
+      - record: pwmk:inference:latency_p95
+        expr: histogram_quantile(0.95, rate(pwmk_inference_duration_seconds_bucket[5m]))
+
+      - record: pwmk:inference:error_rate
+        expr: rate(pwmk_inference_errors_total[5m]) / rate(pwmk_inference_requests_total[5m])
+
+      # Model performance metrics
+      - record: pwmk:model:prediction_accuracy
+        expr: avg_over_time(pwmk_model_prediction_accuracy[10m])
+
+      - record: pwmk:model:belief_accuracy
+        expr: avg_over_time(pwmk_model_belief_accuracy[10m])
+
+  - name: pwmk.system_health
+    interval: 30s
+    rules:
+      # CPU utilization
+      - record: pwmk:cpu:utilization
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+      # Memory utilization
+      - record: pwmk:memory:utilization
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100
+
+      # Disk utilization
+      - record: pwmk:disk:utilization
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100
+
+      # Network I/O rates
+      - record: pwmk:network:receive_rate
+        expr: rate(node_network_receive_bytes_total[5m])
+
+      - record: pwmk:network:transmit_rate
+        expr: rate(node_network_transmit_bytes_total[5m])
+
+  - name: pwmk.belief_system
+    interval: 60s
+    rules:
+      # Belief reasoning performance
+      - record: pwmk:belief:reasoning_rate
+        expr: rate(pwmk_belief_queries_total[5m])
+
+      - record: pwmk:belief:reasoning_latency_p95
+        expr: histogram_quantile(0.95, rate(pwmk_belief_query_duration_seconds_bucket[5m]))
+
+      - record: pwmk:belief:consistency_rate
+        expr: rate(pwmk_belief_consistency_checks_total[5m])
+
+      - record: pwmk:belief:inconsistency_rate
+        expr: rate(pwmk_belief_inconsistencies_total[5m])
+
+      # Theory of Mind metrics
+      - record: pwmk:tom:depth_avg
+        expr: avg_over_time(pwmk_tom_reasoning_depth[10m])
+
+      - record: pwmk:tom:accuracy
+        expr: avg_over_time(pwmk_tom_prediction_accuracy[10m])
+
+  - name: pwmk.experiments
+    interval: 300s  # 5 minutes
+    rules:
+      # Experiment duration
+      - record: pwmk:experiment:duration
+        expr: time() - pwmk_experiment_start_time_seconds
+
+      # Experiment success rate
+      - record: pwmk:experiment:success_rate
+        expr: rate(pwmk_experiments_completed_total{status="success"}[1h]) / rate(pwmk_experiments_completed_total[1h])
+
+      # Resource utilization per experiment
+      - record: pwmk:experiment:cpu_usage
+        expr: avg by(experiment_id) (pwmk_experiment_cpu_usage_percent)
+
+      - record: pwmk:experiment:memory_usage
+        expr: avg by(experiment_id) (pwmk_experiment_memory_usage_bytes)
+
+      - record: pwmk:experiment:gpu_usage
+        expr: avg by(experiment_id) (pwmk_experiment_gpu_usage_percent)
+
+  - name: pwmk.data_quality
+    interval: 300s
+    rules:
+      # Data completeness
+      - record: pwmk:data:completeness_ratio
+        expr: avg_over_time(pwmk_data_completeness_ratio[1h])
+
+      # Data freshness
+      - record: pwmk:data:age_seconds
+        expr: time() - pwmk_data_last_update_timestamp
+
+      # Data processing rate
+      - record: pwmk:data:processing_rate
+        expr: rate(pwmk_data_records_processed_total[5m])
+
+      - record: pwmk:data:error_rate
+        expr: rate(pwmk_data_processing_errors_total[5m]) / rate(pwmk_data_records_processed_total[5m])
+
+  - name: pwmk.unity_integration
+    interval: 60s
+    rules:
+      # Unity environment metrics
+      - record: pwmk:unity:environment_rate
+        expr: rate(pwmk_unity_steps_total[5m])
+
+      - record: pwmk:unity:episode_length_avg
+        expr: avg_over_time(pwmk_unity_episode_length[10m])
+
+      - record: pwmk:unity:reward_avg
+        expr: avg_over_time(pwmk_unity_episode_reward[10m])
+
+      - record: pwmk:unity:connection_errors
+        expr: rate(pwmk_unity_connection_errors_total[5m])
+
+  - name: pwmk.business_metrics
+    interval: 600s  # 10 minutes
+    rules:
+      # Research productivity metrics
+      - record: pwmk:research:experiments_per_day
+        expr: increase(pwmk_experiments_started_total[24h])
+
+      - record: pwmk:research:successful_experiments_ratio
+        expr: increase(pwmk_experiments_completed_total{status="success"}[24h]) / increase(pwmk_experiments_completed_total[24h])
+
+      - record: pwmk:research:avg_experiment_duration_hours
+        expr: avg_over_time(pwmk:experiment:duration[24h]) / 3600
+
+      # Resource efficiency
+      - record: pwmk:efficiency:gpu_utilization_avg
+        expr: avg_over_time(nvidia_gpu_utilization_gpu[1h])
+
+      - record: pwmk:efficiency:cost_per_experiment
+        expr: (pwmk:efficiency:gpu_utilization_avg * 0.5 + pwmk:cpu:utilization * 0.1) * pwmk:research:avg_experiment_duration_hours
+
+  - name: pwmk.sla_metrics
+    interval: 60s
+    rules:
+      # Availability SLA (99.9% target)
+      - record: pwmk:sla:availability_1h
+        expr: avg_over_time(up{job="pwmk-app"}[1h])
+
+      - record: pwmk:sla:availability_24h
+        expr: avg_over_time(up{job="pwmk-app"}[24h])
+
+      - record: pwmk:sla:availability_7d
+        expr: avg_over_time(up{job="pwmk-app"}[7d])
+
+      # Performance SLA (95% of requests < 1s)
+      - record: pwmk:sla:performance_1h
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="pwmk-app"}[1h]))
+
+      - record: pwmk:sla:performance_24h
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="pwmk-app"}[24h]))
+
+      # Error rate SLA (< 0.1% error rate)
+      - record: pwmk:sla:error_rate_1h
+        expr: rate(http_requests_total{job="pwmk-app",status=~"5.."}[1h]) / rate(http_requests_total{job="pwmk-app"}[1h])
+
+      - record: pwmk:sla:error_rate_24h
+        expr: rate(http_requests_total{job="pwmk-app",status=~"5.."}[24h]) / rate(http_requests_total{job="pwmk-app"}[24h])
