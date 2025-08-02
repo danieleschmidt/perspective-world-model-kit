@@ -5,7 +5,8 @@ services:
   dev:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
+      target: development
     ports:
       - "8888:8888"
       - "6006:6006"  # TensorBoard
@@ -23,7 +24,8 @@ services:
   test:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
+      target: testing
     volumes:
       - .:/app
     environment:
@@ -31,11 +33,12 @@ services:
       - PYTEST_CURRENT_TEST=true
     command: pytest tests/ -v --cov=pwmk
 
-  # Documentation server
+  # Documentation server  
   docs:
     build:
       context: .
-      dockerfile: Dockerfile.docs
+      dockerfile: Dockerfile
+      target: development
     ports:
       - "8080:8080"
     volumes:
