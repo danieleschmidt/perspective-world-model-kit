@@ -1,0 +1,489 @@
+# Security scanning workflow for PWMK
+# Place this file at: .github/workflows/security.yml
+
+name: Security Scanning
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run security scans weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      scan_type:
+        description: 'Type of security scan'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - dependencies
+          - code
+          - container
+          - secrets
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # Dependency vulnerability scanning
+  dependency-scan:
+    name: Dependency Scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event.inputs.scan_type == 'dependencies' || github.event.inputs.scan_type == 'all' || github.event.inputs.scan_type == ''
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install safety pip-audit cyclonedx-bom
+
+    - name: Install project dependencies
+      run: pip install -e .
+
+    - name: Run Safety check
+      run: |
+        safety check \
+          --json \
+          --output safety-report.json \
+          --continue-on-error
+      continue-on-error: true
+
+    - name: Run pip-audit
+      run: |
+        pip-audit \
+          --format=json \
+          --output=pip-audit-report.json \
+          --desc
+      continue-on-error: true
+
+    - name: Generate SBOM
+      run: |
+        cyclonedx-py \
+          --format json \
+          --output sbom.json \
+          --schema-version 1.4
+
+    - name: Upload SBOM to GitHub
+      uses: actions/upload-artifact@v3
+      with:
+        name: sbom
+        path: sbom.json
+
+    - name: Parse vulnerability reports
+      id: parse_vulns
+      run: |
+        python -c "
+        import json
+        import sys
+        
+        # Parse safety report
+        safety_vulns = 0
+        try:
+            with open('safety-report.json', 'r') as f:
+                safety_data = json.load(f)
+                safety_vulns = len(safety_data.get('vulnerabilities', []))
+        except:
+            pass
+            
+        # Parse pip-audit report
+        audit_vulns = 0
+        try:
+            with open('pip-audit-report.json', 'r') as f:
+                audit_data = json.load(f)
+                audit_vulns = len(audit_data.get('vulnerabilities', []))
+        except:
+            pass
+            
+        total_vulns = safety_vulns + audit_vulns
+        print(f'safety_vulns={safety_vulns}')
+        print(f'audit_vulns={audit_vulns}')
+        print(f'total_vulns={total_vulns}')
+        
+        # Set outputs
+        with open('$GITHUB_OUTPUT', 'a') as f:
+            f.write(f'safety_vulns={safety_vulns}\n')
+            f.write(f'audit_vulns={audit_vulns}\n')
+            f.write(f'total_vulns={total_vulns}\n')
+        "
+
+    - name: Upload dependency scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: dependency-scan-results
+        path: |
+          safety-report.json
+          pip-audit-report.json
+          sbom.json
+
+    - name: Comment on PR with vulnerability summary
+      if: github.event_name == 'pull_request' && steps.parse_vulns.outputs.total_vulns != '0'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const safetyVulns = ${{ steps.parse_vulns.outputs.safety_vulns }};
+          const auditVulns = ${{ steps.parse_vulns.outputs.audit_vulns }};
+          const totalVulns = ${{ steps.parse_vulns.outputs.total_vulns }};
+          
+          const comment = `## 🔒 Security Scan Results
+          
+          **Vulnerabilities Found:** ${totalVulns}
+          - Safety: ${safetyVulns}
+          - Pip-audit: ${auditVulns}
+          
+          Please review the security scan artifacts for detailed information.
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+
+  # Static code analysis
+  code-scan:
+    name: Code Security Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.event.inputs.scan_type == 'code' || github.event.inputs.scan_type == 'all' || github.event.inputs.scan_type == ''
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for better analysis
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install analysis tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install bandit[toml] semgrep pylint
+
+    - name: Run Bandit security linter
+      run: |
+        bandit -r pwmk/ \
+          -f json \
+          -o bandit-report.json \
+          -ll \
+          --skip B101,B601
+      continue-on-error: true
+
+    - name: Run Semgrep security analysis
+      run: |
+        semgrep \
+          --config=auto \
+          --json \
+          --output=semgrep-report.json \
+          pwmk/
+      continue-on-error: true
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: python
+        queries: security-extended,security-and-quality
+        config-file: .github/codeql/codeql-config.yml
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        category: security
+
+    - name: Upload code scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: code-scan-results
+        path: |
+          bandit-report.json
+          semgrep-report.json
+
+  # Container security scanning
+  container-scan:
+    name: Container Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.event.inputs.scan_type == 'container' || github.event.inputs.scan_type == 'all' || github.event.inputs.scan_type == ''
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Docker image
+      run: |
+        docker build -t pwmk:security-scan --target production .
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'pwmk:security-scan'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    - name: Run Trivy for JSON report
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'pwmk:security-scan'
+        format: 'json'
+        output: 'trivy-report.json'
+
+    - name: Run Hadolint Dockerfile linter
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: Dockerfile
+        output-file: hadolint-report.json
+        format: json
+        no-fail: true
+
+    - name: Upload container scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: container-scan-results
+        path: |
+          trivy-results.sarif
+          trivy-report.json
+          hadolint-report.json
+
+  # Secret scanning
+  secret-scan:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event.inputs.scan_type == 'secrets' || github.event.inputs.scan_type == 'all' || github.event.inputs.scan_type == ''
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Run TruffleHog secret scanner
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified --json --output trufflehog-report.json
+      continue-on-error: true
+
+    - name: Run GitLeaks secret scanner
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      with:
+        config-path: .gitleaks.toml
+
+    - name: Upload secret scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: secret-scan-results
+        path: |
+          trufflehog-report.json
+          gitleaks-report.json
+
+  # License compliance check
+  license-scan:
+    name: License Compliance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event.inputs.scan_type == 'all' || github.event.inputs.scan_type == ''
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install license scanning tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install pip-licenses licensecheck
+
+    - name: Install project dependencies
+      run: pip install -e .
+
+    - name: Generate license report
+      run: |
+        pip-licenses --format=json --output-file=licenses.json
+        pip-licenses --format=plain --output-file=licenses.txt
+
+    - name: Check for problematic licenses
+      run: |
+        python -c "
+        import json
+        import sys
+        
+        # List of problematic licenses (modify as needed)
+        problematic = ['GPL-3.0', 'AGPL-3.0', 'SSPL-1.0']
+        
+        with open('licenses.json', 'r') as f:
+            licenses = json.load(f)
+        
+        issues = []
+        for pkg in licenses:
+            license = pkg.get('License', 'Unknown')
+            if any(p in license for p in problematic):
+                issues.append(f\"{pkg['Name']} ({license})\")
+        
+        if issues:
+            print('Problematic licenses found:')
+            for issue in issues:
+                print(f'  - {issue}')
+            sys.exit(1)
+        else:
+            print('No problematic licenses found')
+        "
+
+    - name: Upload license scan results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: license-scan-results
+        path: |
+          licenses.json
+          licenses.txt
+
+  # Security summary
+  security-summary:
+    name: Security Summary
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, code-scan, container-scan, secret-scan, license-scan]
+    if: always()
+    
+    steps:
+    - name: Download all scan results
+      uses: actions/download-artifact@v3
+
+    - name: Generate security summary
+      run: |
+        echo "# Security Scan Summary" > security-summary.md
+        echo "" >> security-summary.md
+        echo "Generated on: $(date)" >> security-summary.md
+        echo "" >> security-summary.md
+        
+        # Check each scan result
+        for scan in dependency-scan code-scan container-scan secret-scan license-scan; do
+          if [ -d "$scan-results" ]; then
+            echo "## $scan" >> security-summary.md
+            echo "✅ Completed" >> security-summary.md
+            echo "" >> security-summary.md
+          else
+            echo "## $scan" >> security-summary.md
+            echo "❌ Skipped or failed" >> security-summary.md
+            echo "" >> security-summary.md
+          fi
+        done
+
+    - name: Upload security summary
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-summary
+        path: security-summary.md
+
+    - name: Comment on PR with summary
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const summary = fs.readFileSync('security-summary.md', 'utf8');
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: summary
+          });
+
+  # Create security issue if vulnerabilities found
+  create-security-issue:
+    name: Create Security Issue
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, code-scan, container-scan, secret-scan]
+    if: always() && (needs.dependency-scan.result == 'failure' || needs.code-scan.result == 'failure' || needs.container-scan.result == 'failure' || needs.secret-scan.result == 'failure')
+    
+    steps:
+    - name: Create security issue
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const title = `Security vulnerabilities detected - ${new Date().toISOString().split('T')[0]}`;
+          const body = `
+          ## Security Alert
+          
+          Automated security scanning has detected potential vulnerabilities.
+          
+          **Scan Results:**
+          - Dependency Scan: ${{ needs.dependency-scan.result }}
+          - Code Scan: ${{ needs.code-scan.result }}
+          - Container Scan: ${{ needs.container-scan.result }}
+          - Secret Scan: ${{ needs.secret-scan.result }}
+          
+          **Action Required:**
+          1. Review the security scan artifacts
+          2. Address any critical vulnerabilities
+          3. Update dependencies as needed
+          4. Close this issue once resolved
+          
+          **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          `;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: body,
+            labels: ['security', 'vulnerability', 'automated']
+          });
+
+  # Notify security team
+  notify-security:
+    name: Notify Security Team
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, code-scan, container-scan, secret-scan]
+    if: always() && github.event_name == 'schedule' && (needs.dependency-scan.result == 'failure' || needs.code-scan.result == 'failure' || needs.container-scan.result == 'failure' || needs.secret-scan.result == 'failure')
+    
+    steps:
+    - name: Send security alert
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#security-alerts'
+        message: |
+          🚨 Security vulnerabilities detected in PWMK repository
+          
+          Please review the security scan results and take appropriate action.
+          
+          Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SECURITY_SLACK_WEBHOOK_URL }}

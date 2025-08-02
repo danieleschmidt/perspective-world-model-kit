@@ -1,0 +1,440 @@
+# Release automation workflow for PWMK
+# Place this file at: .github/workflows/release.yml
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.2.3)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Is this a pre-release?'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # Validate release
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      is_prerelease: ${{ steps.version.outputs.is_prerelease }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Extract version from tag or input
+      id: version
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          VERSION="${{ github.event.inputs.version }}"
+          IS_PRERELEASE="${{ github.event.inputs.prerelease }}"
+        else
+          VERSION=${GITHUB_REF#refs/tags/v}
+          if [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            IS_PRERELEASE=false
+          else
+            IS_PRERELEASE=true
+          fi
+        fi
+        
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "is_prerelease=$IS_PRERELEASE" >> $GITHUB_OUTPUT
+        echo "Version: $VERSION"
+        echo "Pre-release: $IS_PRERELEASE"
+
+    - name: Validate version format
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+(\.[0-9]+)?)?$ ]]; then
+          echo "Invalid version format: $VERSION"
+          exit 1
+        fi
+
+    - name: Check if version exists
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        if git tag | grep -q "^v$VERSION$"; then
+          echo "Version v$VERSION already exists"
+          exit 1
+        fi
+
+  # Run full test suite
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: validate
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pwmk_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y swi-prolog build-essential
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev,test,prolog,unity]"
+
+    - name: Run comprehensive tests
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/pwmk_test
+        REDIS_URL: redis://localhost:6379/0
+      run: |
+        pytest tests/ -v \
+          --cov=pwmk \
+          --cov-report=xml \
+          --cov-report=html \
+          --junitxml=test-results.xml \
+          -m "not gpu"
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: release-test-results
+        path: |
+          test-results.xml
+          htmlcov/
+          coverage.xml
+
+  # Build distribution packages
+  build:
+    name: Build Distribution
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [validate, test]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install build tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine wheel setuptools_scm
+
+    - name: Update version in __init__.py
+      run: |
+        VERSION="${{ needs.validate.outputs.version }}"
+        sed -i "s/__version__ = .*/__version__ = \"$VERSION\"/" pwmk/__init__.py
+
+    - name: Build source distribution
+      run: python -m build --sdist
+
+    - name: Build wheel distribution
+      run: python -m build --wheel
+
+    - name: Check distributions
+      run: |
+        twine check dist/*
+        python -m pip install dist/*.whl
+        python -c "import pwmk; print(f'Version: {pwmk.__version__}')"
+
+    - name: Upload distributions
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: dist/
+
+  # Build and push Docker images
+  docker:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [validate, test]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Log in to Docker Hub
+      if: secrets.DOCKER_HUB_TOKEN
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: |
+          ghcr.io/${{ github.repository }}
+          ${{ secrets.DOCKER_HUB_USERNAME }}/pwmk
+        tags: |
+          type=semver,pattern={{version}},value=v${{ needs.validate.outputs.version }}
+          type=semver,pattern={{major}}.{{minor}},value=v${{ needs.validate.outputs.version }}
+          type=semver,pattern={{major}},value=v${{ needs.validate.outputs.version }}
+          type=raw,value=latest,enable={{is_default_branch}}
+        labels: |
+          org.opencontainers.image.title=PWMK
+          org.opencontainers.image.description=Perspective World Model Kit
+          org.opencontainers.image.version=${{ needs.validate.outputs.version }}
+
+    - name: Build and push production image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        target: production
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  # Create GitHub release
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [validate, test, build, docker]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: dist
+        path: dist/
+
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        VERSION="${{ needs.validate.outputs.version }}"
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^)
+        
+        echo "## What's Changed" > release_notes.md
+        echo "" >> release_notes.md
+        
+        # Get commits since last tag
+        git log $PREVIOUS_TAG..HEAD --pretty=format:"- %s (%h)" --no-merges >> release_notes.md
+        
+        echo "" >> release_notes.md
+        echo "## Docker Images" >> release_notes.md
+        echo "- \`ghcr.io/${{ github.repository }}:$VERSION\`" >> release_notes.md
+        echo "- \`ghcr.io/${{ github.repository }}:latest\`" >> release_notes.md
+        
+        echo "" >> release_notes.md
+        echo "## Installation" >> release_notes.md
+        echo "\`\`\`bash" >> release_notes.md
+        echo "pip install perspective-world-model-kit==$VERSION" >> release_notes.md
+        echo "\`\`\`" >> release_notes.md
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      id: create_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ needs.validate.outputs.version }}
+        release_name: PWMK v${{ needs.validate.outputs.version }}
+        body_path: release_notes.md
+        draft: false
+        prerelease: ${{ needs.validate.outputs.is_prerelease }}
+
+    - name: Upload wheel to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/perspective_world_model_kit-${{ needs.validate.outputs.version }}-py3-none-any.whl
+        asset_name: perspective_world_model_kit-${{ needs.validate.outputs.version }}-py3-none-any.whl
+        asset_content_type: application/zip
+
+    - name: Upload source distribution to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/perspective-world-model-kit-${{ needs.validate.outputs.version }}.tar.gz
+        asset_name: perspective-world-model-kit-${{ needs.validate.outputs.version }}.tar.gz
+        asset_content_type: application/gzip
+
+  # Publish to PyPI
+  publish:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [validate, test, build, release]
+    environment: pypi
+    
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: dist
+        path: dist/
+
+    - name: Publish to Test PyPI
+      if: needs.validate.outputs.is_prerelease == 'true'
+      uses: pypa/gh-action-pypi-publish@v1.8.10
+      with:
+        repository-url: https://test.pypi.org/legacy/
+        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+
+    - name: Publish to PyPI
+      if: needs.validate.outputs.is_prerelease == 'false'
+      uses: pypa/gh-action-pypi-publish@v1.8.10
+      with:
+        password: ${{ secrets.PYPI_API_TOKEN }}
+
+  # Update documentation
+  docs:
+    name: Update Documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [validate, publish]
+    if: needs.validate.outputs.is_prerelease == 'false'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+
+    - name: Install documentation dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[docs]"
+
+    - name: Build documentation
+      run: |
+        cd docs
+        make html
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/_build/html
+        cname: docs.pwmk.org
+
+  # Notify stakeholders
+  notify:
+    name: Notify Release
+    runs-on: ubuntu-latest
+    needs: [validate, publish, docs]
+    if: always()
+    
+    steps:
+    - name: Notify Slack on success
+      if: needs.publish.result == 'success'
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        channel: '#pwmk-releases'
+        message: |
+          :rocket: PWMK v${{ needs.validate.outputs.version }} has been released!
+          
+          - PyPI: https://pypi.org/project/perspective-world-model-kit/${{ needs.validate.outputs.version }}/
+          - GitHub: ${{ github.server_url }}/${{ github.repository }}/releases/tag/v${{ needs.validate.outputs.version }}
+          - Docker: ghcr.io/${{ github.repository }}:${{ needs.validate.outputs.version }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notify Slack on failure
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#pwmk-releases'
+        message: ':x: Release v${{ needs.validate.outputs.version }} failed. Please check the workflow.'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Send email notification
+      if: needs.publish.result == 'success'
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: PWMK v${{ needs.validate.outputs.version }} Released
+        to: team@pwmk.org
+        from: noreply@pwmk.org
+        body: |
+          PWMK v${{ needs.validate.outputs.version }} has been successfully released.
+          
+          Release Notes: ${{ github.server_url }}/${{ github.repository }}/releases/tag/v${{ needs.validate.outputs.version }}
+          PyPI: https://pypi.org/project/perspective-world-model-kit/${{ needs.validate.outputs.version }}/
+          
+          Installation:
+          pip install perspective-world-model-kit==${{ needs.validate.outputs.version }}
