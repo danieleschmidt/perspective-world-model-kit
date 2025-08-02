@@ -83,15 +83,35 @@ builds/
 tmp/
 
 # Docker
-Dockerfile*
-docker-compose*
+docker-compose*.yml
 .dockerignore
 
 # CI/CD
 .github/
 .gitlab-ci.yml
+.circleci/
+.travis.yml
 
 # Package builds
 build/
 dist/
 *.egg-info/
+
+# Security and monitoring
+security/
+monitoring/
+chaos-engineering/
+*.sbom
+*.spdx
+
+# Environment files (may contain secrets)
+.env.*
+local.*
+
+# Development tools
+.pre-commit-config.yaml
+.editorconfig
+renovate.json
+
+# SLSA provenance
+slsa-provenance.json
