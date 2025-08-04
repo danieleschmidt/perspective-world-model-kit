@@ -99,6 +99,9 @@ pwmk = "pwmk.cli:main"
 [tool.hatch.version]
 path = "pwmk/__init__.py"
 
+[tool.hatch.build.targets.wheel]
+packages = ["pwmk"]
+
 [tool.hatch.build.targets.sdist]
 exclude = [
     "/.github",
