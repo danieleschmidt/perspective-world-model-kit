@@ -9,6 +9,15 @@ from unittest.mock import Mock
 torch.manual_seed(42)
 np.random.seed(42)
 
+# Import PWMK components for real fixtures
+try:
+    from pwmk import PerspectiveWorldModel, BeliefStore, EpistemicPlanner, ToMAgent
+    from pwmk.envs import SimpleGridWorld
+    from pwmk.planning.epistemic import Goal
+    PWMK_AVAILABLE = True
+except ImportError:
+    PWMK_AVAILABLE = False
+
 
 @pytest.fixture(scope="session")
 def device() -> torch.device:
@@ -94,6 +103,60 @@ def reset_torch_state() -> Generator[None, None, None]:
     # Cleanup
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
+
+
+# Real PWMK fixtures when available
+if PWMK_AVAILABLE:
+    @pytest.fixture
+    def simple_env() -> SimpleGridWorld:
+        """Simple grid world environment for testing."""
+        return SimpleGridWorld(grid_size=6, num_agents=2, view_radius=2)
+
+    @pytest.fixture 
+    def world_model() -> PerspectiveWorldModel:
+        """Basic world model for testing."""
+        return PerspectiveWorldModel(
+            obs_dim=32,
+            action_dim=4,
+            hidden_dim=64,
+            num_agents=2
+        )
+
+    @pytest.fixture
+    def belief_store() -> BeliefStore:
+        """Basic belief store for testing."""
+        store = BeliefStore()
+        # Add some test beliefs
+        store.add_belief("agent_0", "has(agent_1, key)")
+        store.add_belief("agent_0", "at(treasure, room_3)")
+        store.add_belief("agent_1", "at(agent_0, room_1)")
+        return store
+
+    @pytest.fixture
+    def epistemic_planner(world_model, belief_store) -> EpistemicPlanner:
+        """Epistemic planner for testing."""
+        return EpistemicPlanner(
+            world_model=world_model,
+            belief_store=belief_store,
+            search_depth=5
+        )
+
+    @pytest.fixture
+    def tom_agent(world_model) -> ToMAgent:
+        """Theory of Mind agent for testing."""
+        return ToMAgent(
+            agent_id="agent_0", 
+            world_model=world_model,
+            tom_depth=2
+        )
+
+    @pytest.fixture
+    def sample_goal() -> Goal:
+        """Sample planning goal."""
+        return Goal(
+            achievement="has(agent_0, treasure)",
+            epistemic=["believes(agent_1, at(agent_0, room_2))"]
+        )
 
 
 # Markers for different test categories

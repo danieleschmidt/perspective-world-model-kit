@@ -40,7 +40,7 @@ class BeliefStore:
         
     def query(self, query_str: str) -> List[Dict[str, str]]:
         """
-        Query the belief store.
+        Query the belief store with enhanced pattern matching.
         
         Args:
             query_str: Query in simplified Prolog syntax
@@ -48,21 +48,34 @@ class BeliefStore:
         Returns:
             List of variable bindings that satisfy the query
         """
-        # Simplified query processing
         results = []
+        
+        # Handle nested belief queries
+        if "believes(" in query_str:
+            return self._query_nested_beliefs(query_str)
         
         # Extract variables (uppercase identifiers)
         variables = re.findall(r'\b[A-Z][a-zA-Z0-9_]*\b', query_str)
         
-        # Simple pattern matching against facts
+        # Pattern matching against all facts
         for agent_id, facts in self.facts.items():
             for fact in facts:
                 if self._matches_pattern(fact, query_str):
                     binding = self._extract_bindings(fact, query_str, variables)
                     if binding:
+                        binding['agent'] = agent_id  # Add agent context
                         results.append(binding)
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_results = []
+        for result in results:
+            key = tuple(sorted(result.items()))
+            if key not in seen:
+                seen.add(key)
+                unique_results.append(result)
                         
-        return results
+        return unique_results
         
     def get_belief_state(self, agent_id: str) -> Optional[BeliefState]:
         """Get the current belief state for an agent."""
@@ -108,3 +121,48 @@ class BeliefStore:
                     binding[pattern_term] = fact_term
                     
         return binding if binding else None
+    
+    def _query_nested_beliefs(self, query_str: str) -> List[Dict[str, str]]:
+        """Handle nested belief queries like believes(A, believes(B, X))."""
+        results = []
+        
+        # Extract nested structure
+        nested_match = re.search(r'believes\(([^,]+),\s*(.+)\)', query_str)
+        if not nested_match:
+            return results
+            
+        believer = nested_match.group(1).strip()
+        belief_content = nested_match.group(2).strip()
+        
+        # Search through facts for matching beliefs
+        for agent_id, facts in self.facts.items():
+            if believer == agent_id or believer.isupper():  # Variable or exact match
+                for fact in facts:
+                    if self._matches_pattern(fact, belief_content):
+                        binding = {'Believer': agent_id} if believer.isupper() else {}
+                        # Extract additional variables from the belief content
+                        content_vars = re.findall(r'\b[A-Z][a-zA-Z0-9_]*\b', belief_content)
+                        content_binding = self._extract_bindings(fact, belief_content, content_vars)
+                        if content_binding:
+                            binding.update(content_binding)
+                            results.append(binding)
+        
+        return results
+    
+    def add_nested_belief(self, believer: str, target_agent: str, belief: str) -> None:
+        """Add a nested belief (A believes that B believes X)."""
+        nested_belief = f"believes({target_agent}, {belief})"
+        self.add_belief(believer, nested_belief)
+    
+    def get_all_beliefs(self, agent_id: str) -> List[str]:
+        """Get all beliefs for a specific agent."""
+        return self.facts.get(agent_id, [])
+    
+    def clear_beliefs(self, agent_id: str) -> None:
+        """Clear all beliefs for a specific agent."""
+        if agent_id in self.facts:
+            self.facts[agent_id] = []
+            
+    def belief_exists(self, agent_id: str, belief: str) -> bool:
+        """Check if a specific belief exists for an agent."""
+        return belief in self.facts.get(agent_id, [])
