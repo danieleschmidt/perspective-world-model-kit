@@ -12,10 +12,15 @@ __email__ = "pwmk@your-org.com"
 from .core import PerspectiveWorldModel, BeliefStore
 from .planning import EpistemicPlanner
 from .agents import ToMAgent
+from .quantum import QuantumInspiredPlanner, QuantumCircuitOptimizer, QuantumAnnealingScheduler, AdaptiveQuantumAlgorithm
 
 __all__ = [
     "PerspectiveWorldModel",
     "BeliefStore", 
     "EpistemicPlanner",
     "ToMAgent",
+    "QuantumInspiredPlanner",
+    "QuantumCircuitOptimizer",
+    "QuantumAnnealingScheduler", 
+    "AdaptiveQuantumAlgorithm",
 ]
