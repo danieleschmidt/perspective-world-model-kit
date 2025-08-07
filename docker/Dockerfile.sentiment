@@ -1,0 +1,107 @@
+# Multi-stage Dockerfile for PWMK Sentiment Analysis
+FROM python:3.11-slim as base
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app user
+RUN groupadd -r pwmk && useradd -r -g pwmk pwmk
+
+WORKDIR /app
+
+# Development stage
+FROM base as development
+
+# Install development dependencies
+COPY requirements/dev.in requirements/test.in requirements/
+RUN pip install pip-tools && \
+    pip-compile requirements/dev.in && \
+    pip-compile requirements/test.in && \
+    pip install -r requirements/dev.txt -r requirements/test.txt
+
+# Copy application code
+COPY . .
+
+# Install package in development mode
+RUN pip install -e ".[dev,test]"
+
+# Change ownership
+RUN chown -R pwmk:pwmk /app
+
+USER pwmk
+
+CMD ["python", "-m", "pytest", "-v"]
+
+# Production stage  
+FROM base as production
+
+# Install production dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy application code
+COPY pwmk/ pwmk/
+COPY pyproject.toml README.md ./
+
+# Install package
+RUN pip install .
+
+# Create non-root user directories
+RUN mkdir -p /app/data /app/logs /app/models && \
+    chown -R pwmk:pwmk /app
+
+# Security hardening
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
+
+USER pwmk
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD python -c "from pwmk.sentiment import SentimentAnalyzer; print('OK')" || exit 1
+
+# Expose port
+EXPOSE 8000
+
+# Default command
+CMD ["python", "-m", "pwmk.sentiment.server", "--host", "0.0.0.0", "--port", "8000"]
+
+# Slim production stage for minimal deployment
+FROM python:3.11-alpine as slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# Install minimal system dependencies
+RUN apk add --no-cache \
+    libffi \
+    libstdc++ \
+    && addgroup -g 1001 -S pwmk \
+    && adduser -u 1001 -S pwmk -G pwmk
+
+WORKDIR /app
+
+# Copy only necessary files from production stage
+COPY --from=production /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
+COPY --from=production /usr/local/bin/ /usr/local/bin/
+COPY --from=production --chown=pwmk:pwmk /app/pwmk /app/pwmk
+
+USER pwmk
+
+HEALTHCHECK --interval=60s --timeout=5s --start-period=30s --retries=2 \
+  CMD python -c "import pwmk.sentiment" || exit 1
+
+EXPOSE 8000
+
+CMD ["python", "-m", "pwmk.sentiment.server"]
