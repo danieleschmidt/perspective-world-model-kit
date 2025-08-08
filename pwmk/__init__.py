@@ -13,7 +13,6 @@ from .core import PerspectiveWorldModel, BeliefStore
 from .planning import EpistemicPlanner
 from .agents import ToMAgent
 from .quantum import QuantumInspiredPlanner, QuantumCircuitOptimizer, QuantumAnnealingScheduler, AdaptiveQuantumAlgorithm
-from .sentiment import SentimentAnalyzer, MultiAgentSentimentAnalyzer, PerspectiveSentimentModel, BeliefAwareSentimentTracker
 
 __all__ = [
     "PerspectiveWorldModel",
@@ -24,8 +23,4 @@ __all__ = [
     "QuantumCircuitOptimizer",
     "QuantumAnnealingScheduler", 
     "AdaptiveQuantumAlgorithm",
-    "SentimentAnalyzer",
-    "MultiAgentSentimentAnalyzer",
-    "PerspectiveSentimentModel",
-    "BeliefAwareSentimentTracker",
 ]
