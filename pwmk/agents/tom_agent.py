@@ -117,4 +117,4 @@ class ToMAgent:
         
     def _random_action(self) -> int:
         """Select a random action."""
-        return np.random.randint(0, 4)  # 4 possible actions
+        return np.random.randint(0, self.world_model.action_dim)
