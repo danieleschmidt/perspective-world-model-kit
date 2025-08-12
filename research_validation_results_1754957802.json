@@ -1,0 +1,81 @@
+{
+  "basic_operations": {
+    "name": "basic_operations",
+    "mean_time": 0.0006225287914276123,
+    "std_time": 6.839967981250389e-05,
+    "median_time": 0.0006310939788818359,
+    "min_time": 0.00018644332885742188,
+    "max_time": 0.000865936279296875,
+    "throughput": 1603.3995417224478,
+    "success_rate": 1.0,
+    "total_operations": 1000
+  },
+  "concurrent_operations": {
+    "name": "concurrent_operations",
+    "mean_time": 0.003316598653793335,
+    "std_time": 0.019320661716468242,
+    "median_time": 0.0010445117950439453,
+    "min_time": 0.0006697177886962891,
+    "max_time": 0.3810744285583496,
+    "throughput": 974.0015698076753,
+    "success_rate": 1.0,
+    "total_operations": 1000
+  },
+  "scalability": [
+    {
+      "size": 100,
+      "time": 0.00067138671875,
+      "throughput": 148945.45454545456,
+      "beliefs_stored": 11
+    },
+    {
+      "size": 500,
+      "time": 0.006464242935180664,
+      "throughput": 77348.57817283222,
+      "beliefs_stored": 51
+    },
+    {
+      "size": 1000,
+      "time": 0.022435665130615234,
+      "throughput": 44571.890076725256,
+      "beliefs_stored": 101
+    },
+    {
+      "size": 2500,
+      "time": 0.13167095184326172,
+      "throughput": 18986.7238369777,
+      "beliefs_stored": 251
+    },
+    {
+      "size": 5000,
+      "time": 0.5094692707061768,
+      "throughput": 9814.134605350164,
+      "beliefs_stored": 501
+    }
+  ],
+  "memory_simulation": {
+    "num_beliefs": 5000,
+    "estimated_memory_kb": 500.0,
+    "load_time_seconds": 0.005294322967529297,
+    "beliefs_per_second": 944407.817706926,
+    "avg_query_time": 0.0020760512351989746,
+    "query_time_std": 2.9124390290538655e-05
+  },
+  "statistical_analysis": {
+    "group1_mean": 0.0014661227695830683,
+    "group2_mean": 0.0020296937424498364,
+    "effect_size": 1.4918229160728624,
+    "t_statistic_approx": -10.548781002846107,
+    "p_value_approx": 0.999,
+    "significant_at_05": false,
+    "effect_magnitude": "large"
+  },
+  "summary": {
+    "basic_throughput": 1603.3995417224478,
+    "concurrent_throughput": 974.0015698076753,
+    "concurrent_speedup": 0.6074603019789794,
+    "validation_timestamp": 1754957802,
+    "total_tests": 6,
+    "all_tests_passed": true
+  }
+}
