@@ -1,0 +1,81 @@
+{
+  "basic_operations": {
+    "name": "basic_operations",
+    "mean_time": 0.0006286838054656983,
+    "std_time": 7.162628677661696e-05,
+    "median_time": 0.0006322860717773438,
+    "min_time": 0.00018453598022460938,
+    "max_time": 0.000985860824584961,
+    "throughput": 1586.9751849728807,
+    "success_rate": 1.0,
+    "total_operations": 1000
+  },
+  "concurrent_operations": {
+    "name": "concurrent_operations",
+    "mean_time": 0.003261359453201294,
+    "std_time": 0.02128529391551228,
+    "median_time": 0.0010526180267333984,
+    "min_time": 0.0006868839263916016,
+    "max_time": 0.4006075859069824,
+    "throughput": 976.338882822453,
+    "success_rate": 1.0,
+    "total_operations": 1000
+  },
+  "scalability": [
+    {
+      "size": 100,
+      "time": 0.0005526542663574219,
+      "throughput": 180944.95254529768,
+      "beliefs_stored": 11
+    },
+    {
+      "size": 500,
+      "time": 0.0063343048095703125,
+      "throughput": 78935.26046371575,
+      "beliefs_stored": 51
+    },
+    {
+      "size": 1000,
+      "time": 0.023321866989135742,
+      "throughput": 42878.213843936246,
+      "beliefs_stored": 101
+    },
+    {
+      "size": 2500,
+      "time": 0.13307857513427734,
+      "throughput": 18785.893953835017,
+      "beliefs_stored": 251
+    },
+    {
+      "size": 5000,
+      "time": 0.5066821575164795,
+      "throughput": 9868.11934429994,
+      "beliefs_stored": 501
+    }
+  ],
+  "memory_simulation": {
+    "num_beliefs": 5000,
+    "estimated_memory_kb": 500.0,
+    "load_time_seconds": 0.005057334899902344,
+    "beliefs_per_second": 988663.0209315482,
+    "avg_query_time": 0.002134561538696289,
+    "query_time_std": 5.205632588294728e-05
+  },
+  "statistical_analysis": {
+    "group1_mean": 0.0015145530452150648,
+    "group2_mean": 0.001955826593053347,
+    "effect_size": 1.0061505902273038,
+    "t_statistic_approx": -7.114559052445737,
+    "p_value_approx": 0.7114559052445737,
+    "significant_at_05": false,
+    "effect_magnitude": "large"
+  },
+  "summary": {
+    "basic_throughput": 1586.9751849728807,
+    "concurrent_throughput": 976.338882822453,
+    "concurrent_speedup": 0.6152200060009996,
+    "validation_timestamp": 1754957522,
+    "total_tests": 6,
+    "all_tests_passed": true
+  }
+}
