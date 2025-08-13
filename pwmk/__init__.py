@@ -13,6 +13,9 @@ from .core import PerspectiveWorldModel, BeliefStore
 from .planning import EpistemicPlanner
 from .agents import ToMAgent
 from .quantum import QuantumInspiredPlanner, QuantumCircuitOptimizer, QuantumAnnealingScheduler, AdaptiveQuantumAlgorithm
+from .autonomous import SelfImprovingAgent, create_self_improving_agent
+from .breakthrough import EmergentIntelligenceSystem, create_emergent_intelligence_system
+from .revolution import ConsciousnessEngine, ConsciousnessLevel, create_consciousness_engine
 
 __all__ = [
     "PerspectiveWorldModel",
@@ -23,4 +26,11 @@ __all__ = [
     "QuantumCircuitOptimizer",
     "QuantumAnnealingScheduler", 
     "AdaptiveQuantumAlgorithm",
+    "SelfImprovingAgent",
+    "create_self_improving_agent",
+    "EmergentIntelligenceSystem", 
+    "create_emergent_intelligence_system",
+    "ConsciousnessEngine",
+    "ConsciousnessLevel",
+    "create_consciousness_engine",
 ]
