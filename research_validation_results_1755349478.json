@@ -1,0 +1,65 @@
+{
+  "basic_ops": {
+    "name": "belief_operations",
+    "mean_time": 0.0011533856391906737,
+    "std_time": 0.0006111569597418242,
+    "median_time": 0.0011258125305175781,
+    "min_time": 0.0010886192321777344,
+    "max_time": 0.020444869995117188,
+    "throughput": 866.1606237721762,
+    "success_rate": 1.0,
+    "total_operations": 1000
+  },
+  "concurrent_ops": {
+    "name": "concurrent_operations",
+    "mean_time": 0.0011077322959899903,
+    "std_time": 2.3992068182576545e-05,
+    "median_time": 0.0010998249053955078,
+    "min_time": 0.0010523796081542969,
+    "max_time": 0.0014848709106445312,
+    "throughput": 3579.3532200323434,
+    "success_rate": 1.0,
+    "total_operations": 1000
+  },
+  "memory_efficiency": {
+    "num_beliefs": 5000,
+    "baseline_memory_mb": 36.01953125,
+    "peak_memory_mb": 36.51953125,
+    "memory_per_belief_kb": 0.1024,
+    "load_time_seconds": 0.004927873611450195,
+    "beliefs_per_second": 1014636.4120179979,
+    "avg_query_time": 0.0011292505264282227,
+    "query_time_std": 2.3690390579546765e-05
+  },
+  "scalability": [
+    {
+      "size": 100,
+      "throughput": 885.2702052394742,
+      "mean_time": 0.0011286234855651855
+    },
+    {
+      "size": 500,
+      "throughput": 883.0061633320898,
+      "mean_time": 0.0011314916610717773
+    },
+    {
+      "size": 1000,
+      "throughput": 882.1522449925609,
+      "mean_time": 0.0011324222087860107
+    },
+    {
+      "size": 2000,
+      "throughput": 873.3267265978571,
+      "mean_time": 0.0011438443660736085
+    }
+  ],
+  "statistical_analysis": {
+    "t_statistic": -16.29320558456885,
+    "t_test_p_value": 2.0244410260025033e-38,
+    "cohens_d": -2.3158154015728747,
+    "mann_whitney_u": 612.0,
+    "mann_whitney_p": 8.167705415971547e-27,
+    "significant_at_05": "True",
+    "effect_size": "large"
+  }
+}
