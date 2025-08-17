@@ -1,0 +1,29 @@
+{
+  "docker": {
+    "dockerfile_score": 1.0,
+    "compose_score": 1.0,
+    "overall": 1.0
+  },
+  "monitoring": {
+    "prometheus": 1.0,
+    "grafana": 1.0,
+    "alerts": 1.0,
+    "logging": 1.0,
+    "health_checks": 1.0,
+    "overall": 1.0
+  },
+  "security": {
+    "config_score": 1.0,
+    "secrets_score": 0.5,
+    "overall": 0.75
+  },
+  "build": {
+    "config_score": 1.0,
+    "ci_score": 0,
+    "overall": 0.5
+  },
+  "overall": {
+    "score": 0.8125,
+    "status": "\ud83d\udfe1 MOSTLY READY"
+  }
+}
