@@ -1,0 +1,74 @@
+{
+  "codebase": {
+    "total_files": 105,
+    "total_lines": 43569,
+    "total_functions": 1598,
+    "total_classes": 228,
+    "avg_lines_per_file": 414.9428571428571,
+    "complexity_score": 0.87138
+  },
+  "modules": {
+    "pwmk/core/": {
+      "files": 3,
+      "lines": 636
+    },
+    "pwmk/agents/": {
+      "files": 2,
+      "lines": 125
+    },
+    "pwmk/planning/": {
+      "files": 2,
+      "lines": 220
+    },
+    "pwmk/quantum/": {
+      "files": 10,
+      "lines": 5982
+    },
+    "pwmk/optimization/": {
+      "files": 6,
+      "lines": 2479
+    },
+    "pwmk/security/": {
+      "files": 4,
+      "lines": 1130
+    }
+  },
+  "file_structure": {
+    "total_files": 261,
+    "total_size_mb": 3.073549270629883,
+    "file_types": {
+      ".py": {
+        "count": 105,
+        "size": 1721456
+      },
+      ".pack": {
+        "count": 2,
+        "size": 657398
+      },
+      ".md": {
+        "count": 54,
+        "size": 482251
+      },
+      ".yml": {
+        "count": 20,
+        "size": 100551
+      },
+      ".json": {
+        "count": 22,
+        "size": 84607
+      }
+    }
+  },
+  "benchmarks": {
+    "sequential_time": 0.0015876293182373047,
+    "concurrent_time": 0.010517358779907227,
+    "sequential_throughput": 222683592.40967113,
+    "concurrent_throughput": 33614808.37521819,
+    "concurrency_speedup": 0.15095323374062067,
+    "files_tested": 20
+  },
+  "overall": {
+    "score": 0.31328460038048467,
+    "status": "\ud83d\udd34 PERFORMANCE ISSUES"
+  }
+}
