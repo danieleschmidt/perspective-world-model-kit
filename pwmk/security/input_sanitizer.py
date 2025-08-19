@@ -29,6 +29,16 @@ class InputSanitizer:
         r'DELETE\s+FROM',  # SQL deletion
         r'INSERT\s+INTO',  # SQL insertion
         r'UPDATE\s+SET',   # SQL updates
+        r'UNION\s+SELECT', # SQL union attacks
+        r'FILE\s*\(',      # File access attempts
+        r'LOAD_FILE',      # MySQL file loading
+        r'INTO\s+OUTFILE', # MySQL file writing
+        r'xp_cmdshell',    # SQL Server command execution
+        r'sp_executesql',  # SQL Server execution
+        r'\bALTER\s+',     # Database structure changes
+        r'\bCREATE\s+',    # Database object creation
+        r'\bGRANT\s+',     # Privilege escalation
+        r'[;"`]',          # Common injection delimiters (allow single quotes for proper Prolog)
     ]
     
     def __init__(self):
@@ -76,7 +86,7 @@ class InputSanitizer:
         return sanitized
     
     def sanitize_belief_content(self, belief: str) -> str:
-        """Sanitize belief content."""
+        """Sanitize belief content with enhanced security checks."""
         if not isinstance(belief, str):
             raise SecurityError("Belief must be a string")
         
@@ -86,12 +96,28 @@ class InputSanitizer:
                 self.logger.warning(f"Blocked dangerous pattern in belief: {belief[:100]}")
                 raise SecurityError("Belief contains potentially dangerous content")
         
+        # Enhanced content validation
+        if '\x00' in belief:  # Null byte attack
+            raise SecurityError("Null bytes not allowed in belief content")
+        
+        # Check for excessive special characters (potential obfuscation)
+        special_char_ratio = sum(1 for c in belief if not c.isalnum() and c not in ' (),-_') / len(belief) if belief else 0
+        if special_char_ratio > 0.5:
+            raise SecurityError("Belief contains too many special characters")
+        
         # Limit belief length
         if len(belief) > 5000:
             raise SecurityError("Belief too long (max 5000 characters)")
         
-        # Sanitize but preserve structure
-        sanitized = ''.join(char for char in belief if ord(char) >= 32 or char in '\t\n\r')
+        # Sanitize but preserve structure for Prolog-like syntax (allow brackets and quotes)
+        allowed_chars = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[],-_.\'"= \t\n\r')
+        sanitized = ''.join(char for char in belief if char in allowed_chars)
+        
+        # Validate parentheses and brackets are balanced
+        if sanitized.count('(') != sanitized.count(')'):
+            raise SecurityError("Unbalanced parentheses in belief")
+        if sanitized.count('[') != sanitized.count(']'):
+            raise SecurityError("Unbalanced brackets in belief")
         
         return sanitized
     

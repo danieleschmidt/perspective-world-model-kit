@@ -14,7 +14,7 @@ class BeliefValidator:
         self.valid_predicates: Set[str] = {
             'has', 'at', 'believes', 'knows', 'sees', 'location', 
             'can_reach', 'can_unlock', 'safe', 'dangerous', 'path',
-            'connects', 'implies', 'not'
+            'connects', 'implies', 'not', 'position', 'visible_agents'
         }
         self.max_nesting_depth = 5  # Limit belief nesting depth
     

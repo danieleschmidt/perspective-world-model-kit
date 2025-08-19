@@ -22,6 +22,7 @@ from .advanced_optimization import (
     PerformanceMetrics,
     create_advanced_optimization
 )
+from .quantum_accelerated_inference import get_quantum_inference_engine
 
 __all__ = [
     "ModelCache",
@@ -44,5 +45,6 @@ __all__ = [
     "PerformanceProfiler",
     "OptimizationConfig",
     "PerformanceMetrics",
-    "create_advanced_optimization"
+    "create_advanced_optimization",
+    "get_quantum_inference_engine"
 ]

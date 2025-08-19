@@ -1,0 +1,30 @@
+{
+  "publication_id": 1755579207,
+  "timestamp": 1755579207,
+  "generated_at": "2025-08-19 04:53:27",
+  "files": {
+    "academic_paper": "pwmk_academic_paper_1755579207.md",
+    "abstract": "pwmk_abstract_1755579207.md",
+    "presentation_outline": "pwmk_presentation_outline_1755579207.md"
+  },
+  "research_results": {
+    "basic_ops": {
+      "throughput": 878.08,
+      "success_rate": 100.0
+    },
+    "concurrent_ops": {
+      "throughput": 3519.88,
+      "success_rate": 100.0
+    },
+    "memory_efficiency": {
+      "memory_per_belief": 0.12,
+      "loading_speed": 1040047.61
+    }
+  },
+  "metrics": {
+    "paper_length": 385,
+    "abstract_length": 64,
+    "presentation_slides": 2
+  },
+  "status": "publication_ready"
+}
