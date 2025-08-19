@@ -1,0 +1,60 @@
+{
+  "basic_ops": {
+    "name": "belief_operations",
+    "mean_time": 0.0011375393867492675,
+    "std_time": 3.481697572117333e-05,
+    "median_time": 0.001127481460571289,
+    "min_time": 0.0010933876037597656,
+    "max_time": 0.0013899803161621094,
+    "throughput": 878.0841149474088,
+    "success_rate": 1.0,
+    "total_operations": 1000
+  },
+  "concurrent_ops": {
+    "name": "concurrent_operations",
+    "mean_time": 0.001114192485809326,
+    "std_time": 2.9236479493983916e-05,
+    "median_time": 0.0011039972305297852,
+    "min_time": 0.0010409355163574219,
+    "max_time": 0.0014162063598632812,
+    "throughput": 3519.883719661666,
+    "success_rate": 1.0,
+    "total_operations": 1000
+  },
+  "memory_efficiency": {
+    "num_beliefs": 5000,
+    "baseline_memory_mb": 32.70703125,
+    "peak_memory_mb": 33.28125,
+    "memory_per_belief_kb": 0.1176,
+    "load_time_seconds": 0.004807472229003906,
+    "beliefs_per_second": 1040047.6096012696,
+    "avg_query_time": 0.0011336922645568848,
+    "query_time_std": 2.968845309823224e-05
+  },
+  "scalability": [
+    {
+      "size": 100,
+      "throughput": 875.138803980195,
+      "mean_time": 0.0011416387557983399
+    },
+    {
+      "size": 500,
+      "throughput": 867.7215663866464,
+      "mean_time": 0.0011511383056640625
+    },
+    {
+      "size": 1000,
+      "throughput": 864.9601062458627,
+      "mean_time": 0.0011546595096588136
+    },
+    {
+      "size": 2000,
+      "throughput": 869.4766374630203,
+      "mean_time": 0.0011486362218856812
+    }
+  ],
+  "statistical_analysis": {
+    "status": "skipped",
+    "reason": "scipy not available"
+  }
+}
