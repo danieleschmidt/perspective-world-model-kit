@@ -1,0 +1,453 @@
+{
+  "timestamp": 1755696001.5358548,
+  "validation_type": "architecture_and_quality",
+  "total_tests": 5,
+  "passed_tests": 4,
+  "success_rate": 0.8,
+  "overall_success": true,
+  "execution_time": 1.0029222965240479,
+  "detailed_results": {
+    "System Architecture": {
+      "success": true,
+      "details": {
+        "core": {
+          "exists": true,
+          "files_found": [
+            "world_model.py",
+            "beliefs.py"
+          ],
+          "missing_files": [],
+          "classes_found": [
+            "PerspectiveWorldModel",
+            "BeliefState",
+            "BeliefStore"
+          ],
+          "functions_found": [
+            "__init__",
+            "forward",
+            "predict_trajectory",
+            "__init__",
+            "add_belief",
+            "add_rule",
+            "query",
+            "get_belief_state",
+            "update_beliefs",
+            "_matches_pattern",
+            "_extract_bindings",
+            "_query_nested_beliefs",
+            "add_nested_belief",
+            "get_all_beliefs",
+            "clear_beliefs",
+            "belief_exists",
+            "batch_query",
+            "batch_add_beliefs",
+            "get_performance_stats"
+          ],
+          "total_lines": 637,
+          "files_with_docstrings": 2,
+          "error_handling_count": 9
+        },
+        "utils": {
+          "exists": true,
+          "files_found": [
+            "validation.py",
+            "logging.py",
+            "circuit_breaker.py",
+            "fallback_manager.py",
+            "health_monitor.py"
+          ],
+          "missing_files": [],
+          "classes_found": [
+            "PWMKValidationError",
+            "PWMKFormatter",
+            "ContextLogger",
+            "LoggingMixin",
+            "CircuitState",
+            "CircuitBreakerConfig",
+            "CircuitBreakerError",
+            "CircuitBreaker",
+            "ModelCircuitBreaker",
+            "BeliefStoreCircuitBreaker",
+            "NetworkCircuitBreaker",
+            "SystemMode",
+            "FallbackConfig",
+            "FallbackManager",
+            "HealthStatus",
+            "HealthCheck",
+            "SystemHealth",
+            "HealthMonitor"
+          ],
+          "functions_found": [
+            "validate_tensor_shape",
+            "validate_config",
+            "validate_observation_space",
+            "validate_action_space",
+            "validate_belief_string",
+            "validate_agent_id",
+            "safe_tensor_operation",
+            "validate_model_config",
+            "validate_environment_step_output",
+            "setup_logging",
+            "get_logger",
+            "get_context_logger",
+            "__init__",
+            "format",
+            "__init__",
+            "_log_with_context",
+            "debug",
+            "info",
+            "warning",
+            "error",
+            "critical",
+            "logger",
+            "get_context_logger",
+            "get_model_circuit_breaker",
+            "get_belief_store_circuit_breaker",
+            "get_network_circuit_breaker",
+            "__init__",
+            "__call__",
+            "call",
+            "_should_attempt_reset",
+            "_on_success",
+            "_on_failure",
+            "get_state",
+            "reset",
+            "__init__",
+            "_on_failure",
+            "__init__",
+            "__init__",
+            "wrapper",
+            "get_fallback_manager",
+            "with_fallback",
+            "__init__",
+            "_register_default_fallbacks",
+            "get_mode",
+            "set_mode",
+            "check_degraded_timeout",
+            "should_use_fallback",
+            "execute_with_fallback",
+            "_validate_result_quality",
+            "_fallback_model_prediction",
+            "_fallback_belief_reasoning",
+            "_fallback_planning",
+            "_fallback_consciousness",
+            "_fallback_quantum",
+            "register_fallback",
+            "get_system_health",
+            "decorator",
+            "wrapper",
+            "get_health_monitor",
+            "start_health_monitoring",
+            "get_system_health",
+            "__init__",
+            "_register_default_checks",
+            "register_check",
+            "start_monitoring",
+            "stop_monitoring",
+            "_monitor_loop",
+            "_run_health_checks",
+            "_run_single_check",
+            "_update_system_health",
+            "_trigger_auto_recovery",
+            "get_health_report",
+            "force_check",
+            "_check_memory_usage",
+            "_check_model_performance",
+            "_check_belief_store",
+            "_check_quantum_backend",
+            "_check_consciousness_engine"
+          ],
+          "total_lines": 1333,
+          "files_with_docstrings": 5,
+          "error_handling_count": 12
+        },
+        "optimization": {
+          "exists": true,
+          "files_found": [
+            "adaptive_scaling.py",
+            "performance_optimizer.py"
+          ],
+          "missing_files": [],
+          "classes_found": [
+            "ScalingDirection",
+            "PerformanceMetrics",
+            "ScalingRule",
+            "AdaptiveScaler",
+            "GlobalScalingManager",
+            "OptimizationLevel",
+            "OptimizationConfig",
+            "PerformanceOptimizer"
+          ],
+          "functions_found": [
+            "get_scaling_manager",
+            "__init__",
+            "_setup_default_rules",
+            "record_metrics",
+            "_evaluate_scaling",
+            "_evaluate_rule",
+            "_make_scaling_decision",
+            "_scale_up",
+            "_scale_down",
+            "set_scaling_callbacks",
+            "add_rule",
+            "enable_scaling",
+            "get_status",
+            "force_scale",
+            "__init__",
+            "register_component",
+            "get_scaler",
+            "get_global_status",
+            "emergency_scale_down",
+            "get_performance_optimizer",
+            "optimize_model_for_inference",
+            "__init__",
+            "_setup_torch_optimizations",
+            "optimize_model",
+            "_get_compile_mode",
+            "_apply_mixed_precision",
+            "_apply_memory_optimizations",
+            "_apply_model_specific_optimizations",
+            "_optimize_transformer",
+            "_benchmark_model",
+            "optimize_batch_size",
+            "get_optimization_report",
+            "auto_optimize_system",
+            "_auto_optimize_torch_settings",
+            "_auto_optimize_memory",
+            "_auto_optimize_scaling"
+          ],
+          "total_lines": 887,
+          "files_with_docstrings": 2,
+          "error_handling_count": 13
+        },
+        "quantum": {
+          "exists": true,
+          "files_found": [
+            "adaptive_quantum_acceleration.py"
+          ],
+          "missing_files": [],
+          "classes_found": [
+            "QuantumBackend",
+            "QuantumProblem",
+            "QuantumResult",
+            "AdaptiveQuantumAccelerator"
+          ],
+          "functions_found": [
+            "get_quantum_accelerator",
+            "quantum_optimize",
+            "__init__",
+            "_initialize_backends",
+            "_test_backend",
+            "solve_optimization_problem",
+            "_select_best_backend",
+            "_solve_quantum",
+            "_solve_with_qiskit",
+            "_solve_with_cirq",
+            "_solve_with_pennylane",
+            "_solve_classical",
+            "_classical_optimization",
+            "_classical_sampling",
+            "_classical_search",
+            "_classical_generic",
+            "_qiskit_optimization",
+            "_qiskit_sampling",
+            "_qiskit_generic",
+            "_cirq_optimization",
+            "_cirq_generic",
+            "_pennylane_vqe",
+            "_pennylane_generic",
+            "_assess_quantum_advantage",
+            "_update_backend_performance",
+            "_record_execution",
+            "get_performance_report",
+            "set_problem_backend_preference",
+            "objective",
+            "circuit"
+          ],
+          "total_lines": 610,
+          "files_with_docstrings": 1,
+          "error_handling_count": 8
+        },
+        "security": {
+          "exists": true,
+          "files_found": [
+            "input_sanitizer.py",
+            "belief_validator.py"
+          ],
+          "missing_files": [],
+          "classes_found": [
+            "SecurityError",
+            "InputSanitizer",
+            "BeliefValidator"
+          ],
+          "functions_found": [
+            "get_sanitizer",
+            "__init__",
+            "sanitize_belief_query",
+            "sanitize_agent_id",
+            "sanitize_belief_content",
+            "validate_file_path",
+            "get_validator",
+            "__init__",
+            "validate_belief_syntax",
+            "validate_predicate_name",
+            "extract_predicates",
+            "check_nesting_depth",
+            "detect_contradictions",
+            "validate_agent_reference",
+            "sanitize_and_validate"
+          ],
+          "total_lines": 308,
+          "files_with_docstrings": 2,
+          "error_handling_count": 0
+        }
+      }
+    },
+    "Code Quality": {
+      "success": true,
+      "details": {
+        "total_files": 63,
+        "total_lines": 28850,
+        "files_with_docstrings": 47,
+        "files_with_error_handling": 38,
+        "files_with_logging": 41,
+        "files_with_type_hints": 47,
+        "complex_files": 36,
+        "average_complexity": 46.340425531914896
+      }
+    },
+    "Documentation Completeness": {
+      "success": false,
+      "error": "cannot access local variable 'toml' where it is not associated with a value"
+    },
+    "Advanced AI Features": {
+      "success": true,
+      "details": {
+        "consciousness": {
+          "implemented": true,
+          "file_size": 1706,
+          "classes": [
+            "ConsciousnessLevel",
+            "SubjectiveExperience",
+            "ConsciousnessMetrics",
+            "IntegratedInformationCalculator",
+            "GlobalWorkspace",
+            "SelfModelProcessor",
+            "ConsciousnessEngine",
+            "MockWorldModel",
+            "MockBeliefStore",
+            "MockEmergentSystem",
+            "MockSelfImprovingAgent",
+            "QualiaGenerator"
+          ],
+          "complexity": 107
+        },
+        "quantum_computing": {
+          "implemented": true,
+          "file_size": 610,
+          "classes": [
+            "QuantumBackend",
+            "QuantumProblem",
+            "QuantumResult",
+            "AdaptiveQuantumAccelerator"
+          ],
+          "complexity": 59
+        },
+        "autonomous_agents": {
+          "implemented": true,
+          "file_size": 975,
+          "classes": [
+            "PerformanceMetrics",
+            "MetaLearner",
+            "SelfReflection",
+            "ArchitectureEvolution",
+            "SelfImprovingAgent",
+            "MockWorldModel",
+            "MockBeliefStore"
+          ],
+          "complexity": 82
+        },
+        "emergent_intelligence": {
+          "implemented": true,
+          "file_size": 1512,
+          "classes": [
+            "EmergentPattern",
+            "NeuroModule",
+            "EmergentIntelligenceSystem",
+            "MockWorldModel",
+            "MockBeliefStore",
+            "MockSelfImprovingAgent",
+            "CreativityVAE",
+            "GraphIntegrationNet",
+            "CommunicationNetwork"
+          ],
+          "complexity": 115
+        },
+        "theory_of_mind": {
+          "implemented": true,
+          "file_size": 120,
+          "classes": [
+            "ToMAgent"
+          ],
+          "complexity": 14
+        },
+        "belief_reasoning": {
+          "implemented": true,
+          "file_size": 403,
+          "classes": [
+            "BeliefState",
+            "BeliefStore"
+          ],
+          "complexity": 44
+        },
+        "adaptive_scaling": {
+          "implemented": true,
+          "file_size": 433,
+          "classes": [
+            "ScalingDirection",
+            "PerformanceMetrics",
+            "ScalingRule",
+            "AdaptiveScaler",
+            "GlobalScalingManager"
+          ],
+          "complexity": 38
+        },
+        "circuit_breakers": {
+          "implemented": true,
+          "file_size": 198,
+          "classes": [
+            "CircuitState",
+            "CircuitBreakerConfig",
+            "CircuitBreakerError",
+            "CircuitBreaker",
+            "ModelCircuitBreaker",
+            "BeliefStoreCircuitBreaker",
+            "NetworkCircuitBreaker"
+          ],
+          "complexity": 32
+        },
+        "health_monitoring": {
+          "implemented": true,
+          "file_size": 369,
+          "classes": [
+            "HealthStatus",
+            "HealthCheck",
+            "SystemHealth",
+            "HealthMonitor"
+          ],
+          "complexity": 48
+        }
+      }
+    },
+    "Security Implementation": {
+      "success": true,
+      "details": {
+        "input_sanitization": true,
+        "belief_validation": true,
+        "rate_limiting": true,
+        "quantum_security": true,
+        "error_handling": true
+      }
+    }
+  }
+}

@@ -9,6 +9,8 @@ from ..security.input_sanitizer import get_sanitizer, SecurityError
 from ..security.belief_validator import get_validator
 from ..utils.logging import get_logger
 from ..utils.monitoring import get_metrics_collector
+from ..utils.circuit_breaker import get_belief_store_circuit_breaker
+from ..utils.fallback_manager import with_fallback
 from ..optimization.caching import get_cache_manager
 from ..optimization.parallel_processing import get_parallel_processor
 
@@ -41,6 +43,7 @@ class BeliefStore:
         self.validator = get_validator()
         self.logger = get_logger(self.__class__.__name__)
         self.metrics = get_metrics_collector()
+        self.circuit_breaker = get_belief_store_circuit_breaker()
         
         # Performance optimization
         self.cache_manager = get_cache_manager()
@@ -94,6 +97,7 @@ class BeliefStore:
         """Add a reasoning rule."""
         self.rules.append(rule)
         
+    @with_fallback("belief_reasoning")
     def query(self, query_str: str) -> List[Dict[str, str]]:
         """
         Query the belief store with enhanced pattern matching and security.

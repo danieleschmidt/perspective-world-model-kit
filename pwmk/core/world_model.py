@@ -10,6 +10,8 @@ from ..utils.validation import (
 )
 from ..utils.logging import LoggingMixin
 from ..utils.monitoring import get_metrics_collector
+from ..utils.circuit_breaker import get_model_circuit_breaker
+from ..utils.fallback_manager import with_fallback
 from ..optimization.caching import get_cache_manager
 
 
@@ -90,6 +92,7 @@ class PerspectiveWorldModel(nn.Module, LoggingMixin):
             nn.Linear(hidden_dim // 2, 64)  # 64 belief predicates
         )
         
+    @with_fallback("model_prediction")
     def forward(
         self, 
         observations: torch.Tensor,
