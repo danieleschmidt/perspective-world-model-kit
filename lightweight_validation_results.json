@@ -1,0 +1,19 @@
+{
+  "timestamp": 1755695918.72237,
+  "validation_type": "lightweight",
+  "total_tests": 8,
+  "passed_tests": 2,
+  "success_rate": 0.25,
+  "overall_success": false,
+  "execution_time": 0.25119733810424805,
+  "detailed_results": {
+    "Import Structure": false,
+    "File Structure": true,
+    "Configuration Files": true,
+    "Core Functionality": false,
+    "Security Components": false,
+    "Resilience Components": false,
+    "Optimization Components": false,
+    "Quantum Components": false
+  }
+}
