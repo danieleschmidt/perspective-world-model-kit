@@ -1,16 +1,16 @@
 {
   "codebase": {
-    "total_files": 105,
-    "total_lines": 43569,
-    "total_functions": 1598,
-    "total_classes": 228,
-    "avg_lines_per_file": 414.9428571428571,
-    "complexity_score": 0.87138
+    "total_files": 9091,
+    "total_lines": 3739618,
+    "total_functions": 152629,
+    "total_classes": 19289,
+    "avg_lines_per_file": 411.3538664613354,
+    "complexity_score": 1.0
   },
   "modules": {
     "pwmk/core/": {
       "files": 3,
-      "lines": 636
+      "lines": 643
     },
     "pwmk/agents/": {
       "files": 2,
@@ -21,54 +21,54 @@
       "lines": 220
     },
     "pwmk/quantum/": {
-      "files": 10,
-      "lines": 5982
+      "files": 11,
+      "lines": 6592
     },
     "pwmk/optimization/": {
-      "files": 6,
-      "lines": 2479
+      "files": 9,
+      "lines": 3844
     },
     "pwmk/security/": {
-      "files": 4,
-      "lines": 1130
+      "files": 5,
+      "lines": 1427
     }
   },
   "file_structure": {
-    "total_files": 261,
-    "total_size_mb": 3.073549270629883,
+    "total_files": 29395,
+    "total_size_mb": 1095.0347661972046,
     "file_types": {
+      ".so": {
+        "count": 67,
+        "size": 534333739
+      },
+      "": {
+        "count": 498,
+        "size": 221608771
+      },
+      ".pyc": {
+        "count": 9009,
+        "size": 167549845
+      },
       ".py": {
-        "count": 105,
-        "size": 1721456
+        "count": 9091,
+        "size": 134749247
       },
-      ".pack": {
-        "count": 2,
-        "size": 657398
-      },
-      ".md": {
-        "count": 54,
-        "size": 482251
-      },
-      ".yml": {
-        "count": 20,
-        "size": 100551
-      },
-      ".json": {
-        "count": 22,
-        "size": 84607
+      ".h": {
+        "count": 9211,
+        "size": 35995985
       }
     }
   },
   "benchmarks": {
-    "sequential_time": 0.0015876293182373047,
-    "concurrent_time": 0.010517358779907227,
-    "sequential_throughput": 222683592.40967113,
-    "concurrent_throughput": 33614808.37521819,
-    "concurrency_speedup": 0.15095323374062067,
+    "sequential_time": 0.0013239383697509766,
+    "concurrent_time": 0.009113550186157227,
+    "sequential_throughput": 235407483.55123356,
+    "concurrent_throughput": 34197979.2324395,
+    "concurrency_speedup": 0.14527141922825376,
     "files_tested": 20
   },
   "overall": {
-    "score": 0.31328460038048467,
+    "score": 0.6787726182690211,
     "status": "\ud83d\udd34 PERFORMANCE ISSUES"
   }
 }
