@@ -1,24 +1,10 @@
 {
-  "architecture": {
-    "core_modules": 1.0,
-    "advanced_modules": 1.0,
-    "total_score": 1.0
-  },
-  "code_quality": {
-    "total_files": 103,
-    "total_lines": 43047,
-    "docstring_score": 1.0,
-    "complexity_score": 1.0
-  },
-  "documentation": {
-    "doc_completeness": 0.875,
-    "api_docs": 1.0
-  },
-  "deployment": {
-    "container_ready": 1.0,
-    "orchestration": 1.0,
-    "monitoring": 1,
-    "overall": 1.0
-  },
-  "overall_score": 0.984375
+  "timestamp": 1755898457.7348988,
+  "system_initialization": true,
+  "health_check": true,
+  "performance_validation": true,
+  "security_validation": true,
+  "integration_tests": false,
+  "quality_gates": false,
+  "overall_success": false
 }

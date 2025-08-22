@@ -1,0 +1,127 @@
+{
+  "overall_success": false,
+  "total_duration": 0.0162050724029541,
+  "timestamp": 1755898468.6033819,
+  "gates": {
+    "lint_check": {
+      "success": false,
+      "required": false,
+      "duration": 0.0029425621032714844,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "type_check": {
+      "success": false,
+      "required": false,
+      "duration": 0.0011987686157226562,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "security_scan": {
+      "success": false,
+      "required": true,
+      "duration": 0.0022623538970947266,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "unit_tests": {
+      "success": false,
+      "required": true,
+      "duration": 0.0011336803436279297,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "integration_tests": {
+      "success": false,
+      "required": true,
+      "duration": 0.0009765625,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "validation_tests": {
+      "success": false,
+      "required": true,
+      "duration": 0.0009744167327880859,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "performance_benchmark": {
+      "success": false,
+      "required": false,
+      "duration": 0.0007216930389404297,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "memory_leak_check": {
+      "success": false,
+      "required": false,
+      "duration": 0.0006375312805175781,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "dependency_check": {
+      "success": false,
+      "required": true,
+      "duration": 0.0006403923034667969,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "secrets_scan": {
+      "success": false,
+      "required": true,
+      "duration": 0.0006642341613769531,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "documentation_check": {
+      "success": false,
+      "required": false,
+      "duration": 0.0007734298706054688,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "readme_validation": {
+      "success": false,
+      "required": true,
+      "duration": 0.0006465911865234375,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "consciousness_validation": {
+      "success": false,
+      "required": true,
+      "duration": 0.0006911754608154297,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "quantum_validation": {
+      "success": false,
+      "required": true,
+      "duration": 0.0005834102630615234,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    },
+    "research_validation": {
+      "success": false,
+      "required": true,
+      "duration": 0.0007076263427734375,
+      "output": "",
+      "error_output": "[Errno 2] No such file or directory: 'python'"
+    }
+  },
+  "summary": {
+    "total_gates": 15,
+    "passed": 0,
+    "failed": 15,
+    "required_failures": 10
+  },
+  "recommendations": [
+    "Fix code style issues using: python -m black pwmk/",
+    "Add type hints and fix type issues",
+    "Address security vulnerabilities identified by bandit",
+    "Fix failing unit tests",
+    "Fix failing integration tests",
+    "Update vulnerable dependencies",
+    "Remove hardcoded secrets and use environment variables"
+  ]
+}

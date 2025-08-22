@@ -45,6 +45,7 @@ class TestCase:
     retry_count: int = 0
     prerequisites: List[str] = None
     tags: List[str] = None
+    details: Optional[str] = None
 
 
 @dataclass
