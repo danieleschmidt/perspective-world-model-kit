@@ -39,6 +39,7 @@ class FallbackManager:
         
         # Fallback implementations
         self.fallback_handlers: Dict[str, Callable] = {}
+        self.fallbacks: Dict[str, Callable] = {}  # External fallback registrations
         self._register_default_fallbacks()
     
     def _register_default_fallbacks(self) -> None:
@@ -163,6 +164,15 @@ class FallbackManager:
         beliefs = torch.rand(batch_size, seq_len, 64)
         
         return next_states, beliefs
+
+    def add_fallback(self, component: str, fallback_func: Callable) -> None:
+        """Register fallback function for component."""
+        self.fallbacks[component] = fallback_func
+        self.logger.info(f"Registered fallback for component: {component}")
+
+    def has_fallback(self, component: str) -> bool:
+        """Check if fallback is available for component."""
+        return component in self.fallbacks or component in self.fallback_handlers
     
     def _fallback_belief_reasoning(self, query: str, **kwargs):
         """Fallback for belief reasoning using simple rules."""

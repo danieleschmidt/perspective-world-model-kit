@@ -28,16 +28,27 @@ class BeliefValidator:
             self.logger.warning(f"Unbalanced parentheses in belief: {belief}")
             return False
         
-        # Check predicate format - allow basic predicates, nested beliefs, and negation
-        predicate_pattern = r'^[a-zA-Z_][a-zA-Z0-9_]*\([^)]*\)$|^believes\([^,]+,\s*.+\)$|^not\([^)]+\)$'
-        if not re.match(predicate_pattern, belief.strip()):
-            # Allow compound beliefs with logical operators
-            compound_pattern = r'^.+(AND|OR|implies)\s+.+$'
-            if not re.match(compound_pattern, belief.strip(), re.IGNORECASE):
-                self.logger.debug(f"Belief syntax check failed for: {belief}")
-                return False
+        # Enhanced predicate patterns to handle coordinates and complex arguments
+        patterns = [
+            r'^[a-zA-Z_][a-zA-Z0-9_]*\([^)]*\)$',  # Basic predicate(args)
+            r'^believes\([^,]+,\s*.+\)$',  # believes(agent, belief)  
+            r'^not\([^)]+\)$',  # not(predicate)
+            r'^[a-zA-Z_][a-zA-Z0-9_]*\(\([0-9, ]+\)\)$',  # predicate((x, y)) coordinates
+            r'^[a-zA-Z_][a-zA-Z0-9_]*\(\([^)]*\),\s*[^)]*\)$'  # predicate((args), other)
+        ]
         
-        return True
+        # Check if belief matches any valid pattern
+        for pattern in patterns:
+            if re.match(pattern, belief.strip()):
+                return True
+        
+        # Allow compound beliefs with logical operators
+        compound_pattern = r'^.+(AND|OR|implies)\s+.+$'
+        if re.match(compound_pattern, belief.strip(), re.IGNORECASE):
+            return True
+        
+        self.logger.debug(f"Belief syntax check failed for: {belief}")
+        return False
     
     def validate_predicate_name(self, predicate: str) -> bool:
         """Validate that predicate name is in allowed set."""

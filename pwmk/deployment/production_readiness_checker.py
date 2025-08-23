@@ -670,7 +670,7 @@ class ProductionReadinessChecker:
         except Exception as e:
             return False, 0.0, {"error": str(e)}
     
-    async def check_fallback_systems(self) -> Tuple[bool, float, Dict):
+    async def check_fallback_systems(self) -> Tuple[bool, float, Dict]:
         """Check fallback and degraded mode systems."""
         try:
             from ..utils.fallback_manager import get_fallback_manager, SystemMode
