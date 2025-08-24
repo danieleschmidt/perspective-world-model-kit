@@ -811,7 +811,7 @@ class ProductionReadinessChecker:
         except Exception as e:
             return False, 0.0, {"error": str(e)}
     
-    async def check_multi_region_deployment(self) -> Tuple[bool, float, Dict):
+    async def check_multi_region_deployment(self) -> Tuple[bool, float, Dict]:
         """Check multi-region deployment capability."""
         try:
             status = self.global_orchestrator.get_global_status()
