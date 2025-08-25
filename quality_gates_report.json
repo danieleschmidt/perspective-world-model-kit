@@ -1,127 +1,1672 @@
 {
-  "overall_success": false,
-  "total_duration": 0.0162050724029541,
-  "timestamp": 1755898468.6033819,
-  "gates": {
-    "lint_check": {
-      "success": false,
-      "required": false,
-      "duration": 0.0029425621032714844,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
+  "overall_passed": false,
+  "overall_score": 81.46431240156821,
+  "gates_passed": 3,
+  "total_gates": 4,
+  "gate_results": {
+    "validation": {
+      "gate_name": "Validation",
+      "passed": true,
+      "score": 95.79448646821929,
+      "details": {
+        "project_structure": {
+          "file_pwmk/__init__.py": true,
+          "file_pwmk/core/__init__.py": true,
+          "file_pwmk/core/world_model.py": true,
+          "file_pwmk/core/beliefs.py": true,
+          "file_pyproject.toml": true,
+          "file_README.md": true,
+          "dir_pwmk/core": true,
+          "dir_pwmk/planning": true,
+          "dir_pwmk/agents": true,
+          "dir_pwmk/envs": true,
+          "dir_pwmk/utils": true,
+          "dir_tests": true
+        },
+        "python_syntax": {
+          "pwmk/__init__.py": true,
+          "pwmk/cli.py": true,
+          "pwmk/agents/__init__.py": true,
+          "pwmk/agents/tom_agent.py": true,
+          "pwmk/autonomous/__init__.py": true,
+          "pwmk/autonomous/self_improving_agent.py": true,
+          "pwmk/autonomous/transcendent_agent.py": true,
+          "pwmk/breakthrough/__init__.py": true,
+          "pwmk/breakthrough/emergent_intelligence.py": true,
+          "pwmk/breakthrough/meta_intelligence.py": true,
+          "pwmk/core/__init__.py": true,
+          "pwmk/core/beliefs.py": true,
+          "pwmk/core/world_model.py": true,
+          "pwmk/deployment/__init__.py": true,
+          "pwmk/deployment/consciousness_deployment.py": true,
+          "pwmk/deployment/global_consciousness_deployment.py": true,
+          "pwmk/deployment/multi_region_deployment.py": true,
+          "pwmk/deployment/production_readiness_checker.py": true,
+          "pwmk/envs/__init__.py": true,
+          "pwmk/envs/simple_grid.py": true,
+          "pwmk/monitoring/__init__.py": true,
+          "pwmk/monitoring/comprehensive_monitoring.py": true,
+          "pwmk/optimization/__init__.py": true,
+          "pwmk/optimization/adaptive_scaling.py": true,
+          "pwmk/optimization/advanced_optimization.py": true,
+          "pwmk/optimization/auto_scaling.py": true,
+          "pwmk/optimization/batching.py": true,
+          "pwmk/optimization/caching.py": true,
+          "pwmk/optimization/parallel_processing.py": true,
+          "pwmk/optimization/performance_optimizer.py": true,
+          "pwmk/optimization/quantum_accelerated_inference.py": true,
+          "pwmk/optimization/intelligent_caching.py": true,
+          "pwmk/optimization/auto_scaling_engine.py": true,
+          "pwmk/planning/__init__.py": true,
+          "pwmk/planning/epistemic.py": true,
+          "pwmk/quantum/__init__.py": true,
+          "pwmk/quantum/adaptive_quantum.py": true,
+          "pwmk/quantum/adaptive_quantum_acceleration.py": true,
+          "pwmk/quantum/consciousness_quantum_bridge.py": true,
+          "pwmk/quantum/dashboard.py": true,
+          "pwmk/quantum/integration.py": true,
+          "pwmk/quantum/monitoring.py": true,
+          "pwmk/quantum/performance.py": true,
+          "pwmk/quantum/quantum_annealing.py": true,
+          "pwmk/quantum/quantum_circuits.py": true,
+          "pwmk/quantum/quantum_planner.py": true,
+          "pwmk/research/__init__.py": true,
+          "pwmk/research/advanced_framework.py": true,
+          "pwmk/research/publication_generator.py": true,
+          "pwmk/research/breakthrough_algorithms.py": true,
+          "pwmk/revolution/__init__.py": true,
+          "pwmk/revolution/consciousness_engine.py": true,
+          "pwmk/revolution/consciousness_evolution.py": true,
+          "pwmk/security/__init__.py": true,
+          "pwmk/security/belief_validator.py": true,
+          "pwmk/security/input_sanitizer.py": true,
+          "pwmk/security/quantum_security.py": true,
+          "pwmk/security/rate_limiter.py": true,
+          "pwmk/security/secure_config_manager.py": true,
+          "pwmk/utils/__init__.py": true,
+          "pwmk/utils/circuit_breaker.py": true,
+          "pwmk/utils/fallback_manager.py": true,
+          "pwmk/utils/health_monitor.py": true,
+          "pwmk/utils/logging.py": true,
+          "pwmk/utils/monitoring.py": true,
+          "pwmk/utils/validation.py": true,
+          "pwmk/utils/advanced_monitoring.py": true,
+          "pwmk/utils/resilience.py": true,
+          "pwmk/validation/__init__.py": true,
+          "pwmk/validation/comprehensive_system_test.py": true,
+          "pwmk/validation/comprehensive_validation.py": true,
+          "pwmk/global_deployment/multi_region_orchestrator.py": true,
+          "pwmk/global_deployment/i18n_manager.py": true
+        },
+        "import_structure": {
+          "pwmk/cli.py": [
+            "argparse",
+            "sys",
+            "typing"
+          ],
+          "pwmk/agents/tom_agent.py": [
+            "typing",
+            "numpy",
+            "core.world_model",
+            "core.beliefs",
+            "planning.epistemic"
+          ],
+          "pwmk/autonomous/self_improving_agent.py": [
+            "json",
+            "logging",
+            "time",
+            "typing",
+            "dataclasses",
+            "pathlib",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "collections",
+            "core.world_model",
+            "core.beliefs",
+            "quantum.adaptive_quantum"
+          ],
+          "pwmk/autonomous/transcendent_agent.py": [
+            "logging",
+            "time",
+            "json",
+            "threading",
+            "typing",
+            "dataclasses",
+            "pathlib",
+            "enum",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "torch.nn.functional",
+            "collections",
+            "threading",
+            "queue",
+            "uuid",
+            "math",
+            "self_improving_agent",
+            "breakthrough.emergent_intelligence",
+            "breakthrough.meta_intelligence",
+            "revolution.consciousness_engine",
+            "revolution.consciousness_evolution"
+          ],
+          "pwmk/breakthrough/emergent_intelligence.py": [
+            "logging",
+            "time",
+            "json",
+            "typing",
+            "dataclasses",
+            "pathlib",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "torch.nn.functional",
+            "collections",
+            "threading",
+            "threading",
+            "queue",
+            "core.world_model",
+            "core.beliefs",
+            "quantum.adaptive_quantum",
+            "autonomous.self_improving_agent"
+          ],
+          "pwmk/breakthrough/meta_intelligence.py": [
+            "logging",
+            "time",
+            "json",
+            "threading",
+            "typing",
+            "dataclasses",
+            "pathlib",
+            "enum",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "torch.nn.functional",
+            "collections",
+            "threading",
+            "queue",
+            "uuid",
+            "math",
+            "emergent_intelligence",
+            "autonomous.self_improving_agent",
+            "quantum.adaptive_quantum",
+            "revolution.consciousness_engine"
+          ],
+          "pwmk/core/beliefs.py": [
+            "typing",
+            "dataclasses",
+            "re",
+            "time",
+            "security.input_sanitizer",
+            "security.belief_validator",
+            "utils.logging",
+            "utils.monitoring",
+            "utils.circuit_breaker",
+            "utils.fallback_manager",
+            "optimization.caching",
+            "optimization.parallel_processing"
+          ],
+          "pwmk/core/world_model.py": [
+            "typing",
+            "torch",
+            "torch.nn",
+            "time",
+            "utils.validation",
+            "utils.logging",
+            "utils.monitoring",
+            "utils.circuit_breaker",
+            "utils.fallback_manager",
+            "optimization.caching"
+          ],
+          "pwmk/deployment/consciousness_deployment.py": [
+            "logging",
+            "time",
+            "json",
+            "threading",
+            "typing",
+            "dataclasses",
+            "pathlib",
+            "enum",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "torch.nn.functional",
+            "collections",
+            "queue",
+            "uuid",
+            "math",
+            "asyncio",
+            "hashlib",
+            "revolution.consciousness_engine",
+            "revolution.consciousness_evolution",
+            "quantum.consciousness_quantum_bridge",
+            "autonomous.transcendent_agent"
+          ],
+          "pwmk/deployment/global_consciousness_deployment.py": [
+            "time",
+            "asyncio",
+            "threading",
+            "typing",
+            "dataclasses",
+            "enum",
+            "json",
+            "utils.logging",
+            "utils.health_monitor",
+            "utils.fallback_manager",
+            "optimization.adaptive_scaling"
+          ],
+          "pwmk/deployment/multi_region_deployment.py": [
+            "time",
+            "json",
+            "asyncio",
+            "threading",
+            "typing",
+            "dataclasses",
+            "enum",
+            "numpy",
+            "logging",
+            "utils.logging",
+            "utils.monitoring",
+            "security.rate_limiter"
+          ],
+          "pwmk/deployment/production_readiness_checker.py": [
+            "time",
+            "asyncio",
+            "typing",
+            "dataclasses",
+            "enum",
+            "json",
+            "os",
+            "utils.logging",
+            "utils.health_monitor",
+            "optimization.performance_optimizer",
+            "security.input_sanitizer",
+            "global_consciousness_deployment",
+            "psutil",
+            "socket",
+            "optimization.adaptive_scaling",
+            "utils.circuit_breaker",
+            "utils.fallback_manager",
+            "core.beliefs",
+            "quantum.adaptive_quantum_acceleration"
+          ],
+          "pwmk/envs/simple_grid.py": [
+            "typing",
+            "numpy",
+            "gymnasium"
+          ],
+          "pwmk/monitoring/comprehensive_monitoring.py": [
+            "time",
+            "logging",
+            "json",
+            "threading",
+            "queue",
+            "typing",
+            "dataclasses",
+            "collections",
+            "numpy",
+            "torch",
+            "pathlib",
+            "sqlite3",
+            "pickle",
+            "hashlib"
+          ],
+          "pwmk/optimization/adaptive_scaling.py": [
+            "time",
+            "threading",
+            "typing",
+            "dataclasses",
+            "enum",
+            "collections",
+            "statistics",
+            "utils.logging",
+            "utils.health_monitor",
+            "utils.fallback_manager"
+          ],
+          "pwmk/optimization/advanced_optimization.py": [
+            "time",
+            "logging",
+            "threading",
+            "multiprocessing",
+            "concurrent.futures",
+            "typing",
+            "dataclasses",
+            "collections",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "pathlib",
+            "psutil",
+            "queue",
+            "weakref",
+            "gc",
+            "pickle",
+            "hashlib",
+            "json"
+          ],
+          "pwmk/optimization/auto_scaling.py": [
+            "time",
+            "threading",
+            "typing",
+            "dataclasses",
+            "collections",
+            "psutil",
+            "torch",
+            "utils.logging",
+            "utils.monitoring"
+          ],
+          "pwmk/optimization/batching.py": [
+            "time",
+            "typing",
+            "collections",
+            "threading",
+            "torch",
+            "numpy",
+            "queue",
+            "utils.logging",
+            "utils.monitoring"
+          ],
+          "pwmk/optimization/caching.py": [
+            "time",
+            "hashlib",
+            "typing",
+            "collections",
+            "threading",
+            "torch",
+            "numpy",
+            "utils.logging",
+            "utils.monitoring"
+          ],
+          "pwmk/optimization/parallel_processing.py": [
+            "asyncio",
+            "multiprocessing",
+            "threading",
+            "concurrent.futures",
+            "typing",
+            "time",
+            "queue",
+            "dataclasses",
+            "torch",
+            "utils.logging",
+            "utils.monitoring"
+          ],
+          "pwmk/optimization/performance_optimizer.py": [
+            "time",
+            "threading",
+            "typing",
+            "dataclasses",
+            "enum",
+            "torch",
+            "torch.nn",
+            "utils.logging",
+            "adaptive_scaling",
+            "os"
+          ],
+          "pwmk/optimization/quantum_accelerated_inference.py": [
+            "time",
+            "torch",
+            "torch.nn",
+            "numpy",
+            "typing",
+            "dataclasses",
+            "concurrent.futures",
+            "threading",
+            "queue",
+            "utils.logging",
+            "utils.monitoring",
+            "caching"
+          ],
+          "pwmk/optimization/intelligent_caching.py": [
+            "time",
+            "threading",
+            "hashlib",
+            "pickle",
+            "typing",
+            "dataclasses",
+            "collections",
+            "concurrent.futures",
+            "weakref",
+            "abc",
+            "utils.logging",
+            "utils.resilience"
+          ],
+          "pwmk/optimization/auto_scaling_engine.py": [
+            "time",
+            "threading",
+            "math",
+            "statistics",
+            "typing",
+            "dataclasses",
+            "collections",
+            "concurrent.futures",
+            "abc",
+            "utils.logging",
+            "utils.advanced_monitoring",
+            "utils.resilience"
+          ],
+          "pwmk/planning/epistemic.py": [
+            "typing",
+            "dataclasses",
+            "numpy",
+            "core.world_model",
+            "core.beliefs",
+            "time"
+          ],
+          "pwmk/quantum/adaptive_quantum.py": [
+            "typing",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "dataclasses",
+            "time",
+            "collections",
+            "enum",
+            "utils.logging",
+            "utils.monitoring"
+          ],
+          "pwmk/quantum/adaptive_quantum_acceleration.py": [
+            "time",
+            "threading",
+            "typing",
+            "dataclasses",
+            "enum",
+            "numpy",
+            "utils.logging",
+            "utils.circuit_breaker",
+            "utils.fallback_manager",
+            "qiskit",
+            "qiskit",
+            "qiskit.execute",
+            "cirq",
+            "pennylane",
+            "scipy",
+            "qiskit",
+            "qiskit",
+            "qiskit.execute",
+            "cirq",
+            "pennylane"
+          ],
+          "pwmk/quantum/consciousness_quantum_bridge.py": [
+            "logging",
+            "time",
+            "json",
+            "threading",
+            "typing",
+            "dataclasses",
+            "pathlib",
+            "enum",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "torch.nn.functional",
+            "collections",
+            "threading",
+            "queue",
+            "uuid",
+            "math",
+            "cmath",
+            "adaptive_quantum",
+            "revolution.consciousness_engine",
+            "revolution.consciousness_evolution"
+          ],
+          "pwmk/quantum/dashboard.py": [
+            "typing",
+            "json",
+            "time",
+            "pathlib",
+            "threading",
+            "dataclasses",
+            "collections",
+            "numpy",
+            "utils.logging",
+            "monitoring",
+            "psutil",
+            "torch"
+          ],
+          "pwmk/quantum/integration.py": [
+            "typing",
+            "numpy",
+            "torch",
+            "dataclasses",
+            "time",
+            "asyncio",
+            "concurrent.futures",
+            "core.world_model",
+            "core.beliefs",
+            "planning.epistemic",
+            "utils.logging",
+            "utils.monitoring",
+            "utils.validation",
+            "quantum_planner",
+            "quantum_circuits",
+            "quantum_annealing",
+            "adaptive_quantum"
+          ],
+          "pwmk/quantum/monitoring.py": [
+            "typing",
+            "numpy",
+            "time",
+            "dataclasses",
+            "collections",
+            "json",
+            "enum",
+            "pathlib",
+            "utils.logging",
+            "utils.monitoring"
+          ],
+          "pwmk/quantum/performance.py": [
+            "typing",
+            "numpy",
+            "torch",
+            "asyncio",
+            "dataclasses",
+            "time",
+            "concurrent.futures",
+            "multiprocessing",
+            "psutil",
+            "collections",
+            "gc",
+            "threading",
+            "utils.logging",
+            "utils.monitoring",
+            "optimization.caching"
+          ],
+          "pwmk/quantum/quantum_annealing.py": [
+            "typing",
+            "numpy",
+            "torch",
+            "dataclasses",
+            "time",
+            "enum",
+            "utils.logging",
+            "utils.monitoring"
+          ],
+          "pwmk/quantum/quantum_circuits.py": [
+            "typing",
+            "numpy",
+            "torch",
+            "dataclasses",
+            "time",
+            "enum",
+            "utils.logging",
+            "utils.monitoring"
+          ],
+          "pwmk/quantum/quantum_planner.py": [
+            "typing",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "dataclasses",
+            "time",
+            "collections",
+            "utils.logging",
+            "utils.validation",
+            "utils.monitoring"
+          ],
+          "pwmk/research/advanced_framework.py": [
+            "time",
+            "json",
+            "logging",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "typing",
+            "dataclasses",
+            "pathlib",
+            "collections",
+            "threading",
+            "concurrent.futures",
+            "pickle",
+            "hashlib",
+            "datetime",
+            "matplotlib.pyplot",
+            "seaborn",
+            "core.world_model",
+            "core.beliefs",
+            "revolution.consciousness_engine",
+            "autonomous.self_improving_agent",
+            "breakthrough.emergent_intelligence",
+            "quantum.adaptive_quantum",
+            "scipy"
+          ],
+          "pwmk/research/publication_generator.py": [
+            "time",
+            "json",
+            "typing",
+            "pathlib",
+            "hashlib",
+            "utils.logging"
+          ],
+          "pwmk/research/breakthrough_algorithms.py": [
+            "numpy",
+            "time",
+            "math",
+            "threading",
+            "typing",
+            "dataclasses",
+            "abc",
+            "collections",
+            "concurrent.futures",
+            "utils.logging"
+          ],
+          "pwmk/revolution/consciousness_engine.py": [
+            "logging",
+            "time",
+            "json",
+            "threading",
+            "typing",
+            "dataclasses",
+            "pathlib",
+            "enum",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "torch.nn.functional",
+            "collections",
+            "threading",
+            "queue",
+            "uuid",
+            "core.world_model",
+            "core.beliefs",
+            "autonomous.self_improving_agent",
+            "breakthrough.emergent_intelligence"
+          ],
+          "pwmk/revolution/consciousness_evolution.py": [
+            "logging",
+            "time",
+            "json",
+            "threading",
+            "typing",
+            "dataclasses",
+            "pathlib",
+            "enum",
+            "numpy",
+            "torch",
+            "torch.nn",
+            "torch.nn.functional",
+            "collections",
+            "threading",
+            "queue",
+            "uuid",
+            "math",
+            "consciousness_engine",
+            "autonomous.self_improving_agent",
+            "breakthrough.emergent_intelligence",
+            "quantum.adaptive_quantum"
+          ],
+          "pwmk/security/belief_validator.py": [
+            "re",
+            "typing",
+            "utils.logging",
+            "input_sanitizer"
+          ],
+          "pwmk/security/input_sanitizer.py": [
+            "re",
+            "typing",
+            "utils.logging"
+          ],
+          "pwmk/security/quantum_security.py": [
+            "hashlib",
+            "secrets",
+            "logging",
+            "time",
+            "json",
+            "typing",
+            "dataclasses",
+            "pathlib",
+            "numpy",
+            "torch",
+            "cryptography.hazmat.primitives.ciphers",
+            "cryptography.hazmat.primitives",
+            "cryptography.hazmat.primitives.kdf.pbkdf2",
+            "cryptography.hazmat.primitives.asymmetric",
+            "cryptography.hazmat.backends",
+            "base64",
+            "os"
+          ],
+          "pwmk/security/rate_limiter.py": [
+            "time",
+            "typing",
+            "collections",
+            "threading",
+            "utils.logging"
+          ],
+          "pwmk/security/secure_config_manager.py": [
+            "os",
+            "hashlib",
+            "secrets",
+            "base64",
+            "time",
+            "json",
+            "typing",
+            "pathlib",
+            "dataclasses",
+            "utils.logging"
+          ],
+          "pwmk/utils/circuit_breaker.py": [
+            "time",
+            "typing",
+            "enum",
+            "dataclasses",
+            "threading",
+            "logging"
+          ],
+          "pwmk/utils/fallback_manager.py": [
+            "time",
+            "typing",
+            "dataclasses",
+            "enum",
+            "threading",
+            "logging",
+            "circuit_breaker",
+            "torch",
+            "random",
+            "random"
+          ],
+          "pwmk/utils/health_monitor.py": [
+            "time",
+            "threading",
+            "typing",
+            "dataclasses",
+            "enum",
+            "logging",
+            "fallback_manager",
+            "psutil",
+            "core.world_model",
+            "core.beliefs",
+            "quantum.integration",
+            "revolution.consciousness_engine"
+          ],
+          "pwmk/utils/logging.py": [
+            "logging",
+            "sys",
+            "pathlib",
+            "typing",
+            "json",
+            "datetime"
+          ],
+          "pwmk/utils/monitoring.py": [
+            "time",
+            "psutil",
+            "torch",
+            "typing",
+            "collections",
+            "dataclasses",
+            "contextlib",
+            "threading",
+            "json",
+            "pathlib",
+            "logging"
+          ],
+          "pwmk/utils/validation.py": [
+            "torch",
+            "numpy",
+            "typing"
+          ],
+          "pwmk/utils/advanced_monitoring.py": [
+            "time",
+            "threading",
+            "psutil",
+            "queue",
+            "json",
+            "typing",
+            "dataclasses",
+            "datetime",
+            "collections",
+            "contextlib",
+            "logging"
+          ],
+          "pwmk/utils/resilience.py": [
+            "functools",
+            "time",
+            "asyncio",
+            "random",
+            "typing",
+            "dataclasses",
+            "concurrent.futures",
+            "logging"
+          ],
+          "pwmk/validation/comprehensive_system_test.py": [
+            "time",
+            "asyncio",
+            "threading",
+            "typing",
+            "dataclasses",
+            "enum",
+            "traceback",
+            "utils.logging",
+            "utils.health_monitor",
+            "utils.fallback_manager",
+            "utils.circuit_breaker",
+            "optimization.adaptive_scaling",
+            "optimization.performance_optimizer",
+            "quantum.adaptive_quantum_acceleration",
+            "concurrent.futures",
+            "signal",
+            "quantum.adaptive_quantum_acceleration",
+            "security.input_sanitizer",
+            "os",
+            "psutil",
+            "revolution.consciousness_engine",
+            "core.beliefs"
+          ],
+          "pwmk/validation/comprehensive_validation.py": [
+            "time",
+            "logging",
+            "json",
+            "inspect",
+            "traceback",
+            "typing",
+            "dataclasses",
+            "collections",
+            "numpy",
+            "torch",
+            "hashlib",
+            "pathlib",
+            "unittest",
+            "unittest.mock",
+            "pytest"
+          ],
+          "pwmk/global_deployment/multi_region_orchestrator.py": [
+            "time",
+            "asyncio",
+            "json",
+            "typing",
+            "dataclasses",
+            "datetime",
+            "enum",
+            "collections",
+            "utils.logging",
+            "utils.resilience",
+            "i18n_manager"
+          ],
+          "pwmk/global_deployment/i18n_manager.py": [
+            "os",
+            "json",
+            "gettext",
+            "typing",
+            "pathlib",
+            "dataclasses",
+            "datetime",
+            "locale",
+            "utils.logging"
+          ]
+        },
+        "class_definitions": {
+          "pwmk/agents/tom_agent.py": {
+            "ToMAgent": 9
+          },
+          "pwmk/autonomous/self_improving_agent.py": {
+            "PerformanceMetrics": 1,
+            "MetaLearner": 2,
+            "SelfReflection": 6,
+            "ArchitectureEvolution": 9,
+            "SelfImprovingAgent": 29,
+            "MockWorldModel": 1,
+            "MockBeliefStore": 1
+          },
+          "pwmk/autonomous/transcendent_agent.py": {
+            "TranscendenceLevel": 0,
+            "TranscendentCapability": 1,
+            "AutonomousGoalGenerator": 12,
+            "PurposeEvolutionEngine": 11,
+            "TranscendentAutonomousAgent": 30
+          },
+          "pwmk/breakthrough/emergent_intelligence.py": {
+            "EmergentPattern": 2,
+            "NeuroModule": 13,
+            "EmergentIntelligenceSystem": 44,
+            "MockWorldModel": 1,
+            "MockBeliefStore": 1,
+            "MockSelfImprovingAgent": 2,
+            "CreativityVAE": 3,
+            "GraphIntegrationNet": 2,
+            "CommunicationNetwork": 2
+          },
+          "pwmk/breakthrough/meta_intelligence.py": {
+            "MetaIntelligenceLevel": 0,
+            "IntelligenceArchetype": 1,
+            "IntelligenceArchitectureGenerator": 15,
+            "MetaIntelligenceOptimizer": 7,
+            "MetaIntelligenceSystem": 16
+          },
+          "pwmk/core/beliefs.py": {
+            "BeliefState": 0,
+            "BeliefStore": 16
+          },
+          "pwmk/core/world_model.py": {
+            "PerspectiveWorldModel": 3
+          },
+          "pwmk/deployment/consciousness_deployment.py": {
+            "GlobalConsciousnessTopology": 0,
+            "ConsciousnessNode": 17,
+            "GlobalConsciousnessMetrics": 1,
+            "GlobalConsciousnessOrchestrator": 31
+          },
+          "pwmk/deployment/global_consciousness_deployment.py": {
+            "DeploymentRegion": 0,
+            "ConsciousnessMode": 0,
+            "RegionConfig": 0,
+            "ConsciousnessClusterStatus": 0,
+            "GlobalConsciousnessOrchestrator": 3
+          },
+          "pwmk/deployment/multi_region_deployment.py": {
+            "DeploymentRegion": 0,
+            "RegionConfig": 0,
+            "GlobalDeploymentMetrics": 0,
+            "MultiRegionLoadBalancer": 5,
+            "GlobalCompliance": 3,
+            "MultiRegionDeploymentOrchestrator": 11
+          },
+          "pwmk/deployment/production_readiness_checker.py": {
+            "ReadinessLevel": 0,
+            "ReadinessCheck": 0,
+            "ProductionReadinessChecker": 4
+          },
+          "pwmk/envs/simple_grid.py": {
+            "SimpleGridWorld": 8
+          },
+          "pwmk/monitoring/comprehensive_monitoring.py": {
+            "MonitoringMetric": 0,
+            "Alert": 0,
+            "MetricsCollector": 10,
+            "AlertManager": 16,
+            "SystemHealthMonitor": 14,
+            "ComprehensiveMonitoringSystem": 8
+          },
+          "pwmk/optimization/adaptive_scaling.py": {
+            "ScalingDirection": 0,
+            "PerformanceMetrics": 0,
+            "ScalingRule": 0,
+            "AdaptiveScaler": 13,
+            "GlobalScalingManager": 5
+          },
+          "pwmk/optimization/advanced_optimization.py": {
+            "PerformanceMetrics": 0,
+            "OptimizationConfig": 0,
+            "IntelligentCache": 6,
+            "TensorCache": 5,
+            "ConcurrencyManager": 7,
+            "ResourceMonitor": 5,
+            "AutoScaler": 7,
+            "MemoryOptimizer": 6,
+            "PerformanceProfiler": 4,
+            "OptimizedConsciousnessEngine": 3,
+            "AdvancedOptimizationSystem": 8,
+            "OptimizedWrapper": 2
+          },
+          "pwmk/optimization/auto_scaling.py": {
+            "ScalingMetrics": 0,
+            "AutoScaler": 14
+          },
+          "pwmk/optimization/batching.py": {
+            "BatchProcessor": 6,
+            "Future": 5,
+            "DynamicBatcher": 5,
+            "StreamingBatcher": 5
+          },
+          "pwmk/optimization/caching.py": {
+            "LRUCache": 5,
+            "ModelCache": 5,
+            "BeliefCache": 6,
+            "PredictionCache": 5,
+            "CacheManager": 7
+          },
+          "pwmk/optimization/parallel_processing.py": {
+            "ParallelTask": 0,
+            "ParallelBeliefProcessor": 8,
+            "AsyncBeliefProcessor": 1,
+            "LoadBalancer": 4
+          },
+          "pwmk/optimization/performance_optimizer.py": {
+            "OptimizationLevel": 0,
+            "OptimizationConfig": 0,
+            "PerformanceOptimizer": 15
+          },
+          "pwmk/optimization/quantum_accelerated_inference.py": {
+            "InferenceRequest": 0,
+            "InferenceResult": 0,
+            "QuantumInferenceQueue": 5,
+            "QuantumAcceleratedInferenceEngine": 10
+          },
+          "pwmk/optimization/intelligent_caching.py": {
+            "CacheStrategy": 0,
+            "CacheEntry": 4,
+            "IntelligentCache": 19,
+            "DistributedCache": 6
+          },
+          "pwmk/optimization/auto_scaling_engine.py": {
+            "ScalingAction": 0,
+            "ResourceMetrics": 0,
+            "ScalingEvent": 0,
+            "ScalingStrategy": 1,
+            "ThresholdScalingStrategy": 2,
+            "PredictiveScalingStrategy": 4,
+            "QuantumInspiredScalingStrategy": 9,
+            "AutoScalingEngine": 11
+          },
+          "pwmk/planning/epistemic.py": {
+            "Goal": 0,
+            "Plan": 0,
+            "EpistemicPlanner": 8
+          },
+          "pwmk/quantum/adaptive_quantum.py": {
+            "AdaptationStrategy": 0,
+            "QuantumParameters": 0,
+            "AdaptationResult": 0,
+            "AdaptiveQuantumAlgorithm": 19
+          },
+          "pwmk/quantum/adaptive_quantum_acceleration.py": {
+            "QuantumBackend": 0,
+            "QuantumProblem": 0,
+            "QuantumResult": 0,
+            "AdaptiveQuantumAccelerator": 26
+          },
+          "pwmk/quantum/consciousness_quantum_bridge.py": {
+            "QuantumConsciousnessState": 0,
+            "QuantumConsciousnessMetrics": 1,
+            "QuantumStateVector": 7,
+            "QuantumConsciousnessProcessor": 18,
+            "QuantumConsciousnessOrchestrator": 12
+          },
+          "pwmk/quantum/dashboard.py": {
+            "DashboardWidget": 0,
+            "DashboardLayout": 0,
+            "QuantumDashboard": 23
+          },
+          "pwmk/quantum/integration.py": {
+            "QuantumEnhancedPlan": 0,
+            "QuantumPlanningConfig": 0,
+            "QuantumEnhancedPlanner": 13
+          },
+          "pwmk/quantum/monitoring.py": {
+            "MetricType": 0,
+            "QuantumMetric": 0,
+            "QuantumDashboardConfig": 0,
+            "QuantumMetricsCollector": 19
+          },
+          "pwmk/quantum/performance.py": {
+            "PerformanceConfig": 0,
+            "ResourceMetrics": 0,
+            "OptimizationResult": 0,
+            "QuantumPerformanceOptimizer": 14
+          },
+          "pwmk/quantum/quantum_annealing.py": {
+            "AnnealingSchedule": 0,
+            "AnnealingProblem": 0,
+            "AnnealingResult": 0,
+            "QuantumAnnealingScheduler": 12
+          },
+          "pwmk/quantum/quantum_circuits.py": {
+            "GateType": 0,
+            "QuantumGate": 0,
+            "QuantumCircuit": 0,
+            "CircuitOptimizationResult": 0,
+            "QuantumCircuitOptimizer": 16
+          },
+          "pwmk/quantum/quantum_planner.py": {
+            "QuantumState": 0,
+            "PlanningResult": 0,
+            "QuantumInspiredPlanner": 14
+          },
+          "pwmk/research/advanced_framework.py": {
+            "ResearchHypothesis": 1,
+            "ExperimentalResult": 1,
+            "LiteratureReviewEngine": 16,
+            "ExperimentalFramework": 12,
+            "StatisticalValidator": 2,
+            "ResourceMonitor": 3,
+            "AdvancedResearchFramework": 9,
+            "PublicationGenerator": 11
+          },
+          "pwmk/research/publication_generator.py": {
+            "AcademicPublicationGenerator": 5
+          },
+          "pwmk/research/breakthrough_algorithms.py": {
+            "ResearchResult": 0,
+            "NovelAlgorithm": 3,
+            "QuantumInspiredBeliefPropagation": 17,
+            "AdaptiveMetaLearningAlgorithm": 11,
+            "BreakthroughResearchFramework": 15
+          },
+          "pwmk/revolution/consciousness_engine.py": {
+            "ConsciousnessLevel": 0,
+            "SubjectiveExperience": 1,
+            "ConsciousnessMetrics": 1,
+            "IntegratedInformationCalculator": 5,
+            "GlobalWorkspace": 10,
+            "SelfModelProcessor": 5,
+            "ConsciousnessEngine": 29,
+            "MockWorldModel": 1,
+            "MockBeliefStore": 1,
+            "MockEmergentSystem": 2,
+            "MockSelfImprovingAgent": 1,
+            "QualiaGenerator": 2
+          },
+          "pwmk/revolution/consciousness_evolution.py": {
+            "EvolutionaryConsciousnessStage": 0,
+            "ConsciousnessEvolutionMetrics": 1,
+            "ConsciousnessArchitectureEvolution": 10,
+            "SentienceEmergenceDetector": 12,
+            "ConsciousnessEvolutionEngine": 8
+          },
+          "pwmk/security/belief_validator.py": {
+            "BeliefValidator": 8
+          },
+          "pwmk/security/input_sanitizer.py": {
+            "SecurityError": 0,
+            "InputSanitizer": 5
+          },
+          "pwmk/security/quantum_security.py": {
+            "SecurityEvent": 0,
+            "QuantumResistantCrypto": 7,
+            "ConsciousnessSecurityGuard": 7,
+            "AccessControlManager": 4,
+            "IntegrityChecker": 4,
+            "AnomalyDetector": 5,
+            "SecurityMonitor": 12
+          },
+          "pwmk/security/rate_limiter.py": {
+            "RateLimiter": 8,
+            "SecurityThrottler": 5
+          },
+          "pwmk/security/secure_config_manager.py": {
+            "SimpleFernet": 3,
+            "SecureConfigEntry": 0,
+            "SecureConfigManager": 12
+          },
+          "pwmk/utils/circuit_breaker.py": {
+            "CircuitState": 0,
+            "CircuitBreakerConfig": 0,
+            "CircuitBreakerError": 0,
+            "CircuitBreaker": 8,
+            "ModelCircuitBreaker": 2,
+            "BeliefStoreCircuitBreaker": 1,
+            "NetworkCircuitBreaker": 1
+          },
+          "pwmk/utils/fallback_manager.py": {
+            "SystemMode": 0,
+            "FallbackConfig": 0,
+            "FallbackManager": 17
+          },
+          "pwmk/utils/health_monitor.py": {
+            "HealthStatus": 0,
+            "HealthCheck": 0,
+            "SystemHealth": 0,
+            "HealthMonitor": 17
+          },
+          "pwmk/utils/logging.py": {
+            "PWMKFormatter": 2,
+            "ContextLogger": 7,
+            "LoggingMixin": 2
+          },
+          "pwmk/utils/monitoring.py": {
+            "MetricValue": 0,
+            "PerformanceMonitor": 7,
+            "SystemMonitor": 4,
+            "MetricsCollector": 11
+          },
+          "pwmk/utils/validation.py": {
+            "PWMKValidationError": 0
+          },
+          "pwmk/utils/advanced_monitoring.py": {
+            "MetricType": 0,
+            "Metric": 0,
+            "MetricBuffer": 6,
+            "SystemMonitor": 6,
+            "PerformanceProfiler": 3,
+            "AlertManager": 5,
+            "ComprehensiveMonitor": 7
+          },
+          "pwmk/utils/resilience.py": {
+            "RetryConfig": 0,
+            "CircuitBreakerState": 0,
+            "CircuitBreakerConfig": 0,
+            "CircuitBreaker": 7,
+            "RetryHandler": 3,
+            "TimeoutHandler": 2,
+            "FallbackManager": 2,
+            "ResilienceManager": 3,
+            "HealthChecker": 5
+          },
+          "pwmk/validation/comprehensive_system_test.py": {
+            "TestSeverity": 0,
+            "TestResult": 0,
+            "TestCase": 0,
+            "TestExecution": 0,
+            "SystemTestSuite": 21,
+            "TimeoutError": 0
+          },
+          "pwmk/validation/comprehensive_validation.py": {
+            "ValidationResult": 0,
+            "ValidationSuite": 0,
+            "ConsciousnessValidator": 4,
+            "QuantumValidator": 3,
+            "EmergentIntelligenceValidator": 3,
+            "ResearchValidator": 3,
+            "IntegrationValidator": 3,
+            "ComprehensiveValidationSystem": 20
+          },
+          "pwmk/global_deployment/multi_region_orchestrator.py": {
+            "RegionStatus": 0,
+            "DeploymentStrategy": 0,
+            "RegionConfig": 0,
+            "RegionHealth": 0,
+            "DeploymentTask": 0,
+            "MultiRegionOrchestrator": 8
+          },
+          "pwmk/global_deployment/i18n_manager.py": {
+            "LocalizationEntry": 0,
+            "I18nManager": 21
+          }
+        },
+        "docstring_coverage": {
+          "pwmk/cli.py": 1.0,
+          "pwmk/agents/tom_agent.py": 0.8888888888888888,
+          "pwmk/autonomous/self_improving_agent.py": 0.88,
+          "pwmk/autonomous/transcendent_agent.py": 0.9454545454545454,
+          "pwmk/breakthrough/emergent_intelligence.py": 0.8028169014084507,
+          "pwmk/breakthrough/meta_intelligence.py": 0.925,
+          "pwmk/core/beliefs.py": 0.9375,
+          "pwmk/core/world_model.py": 0.6666666666666666,
+          "pwmk/deployment/consciousness_deployment.py": 0.96,
+          "pwmk/deployment/global_consciousness_deployment.py": 0.8846153846153846,
+          "pwmk/deployment/multi_region_deployment.py": 0.8636363636363636,
+          "pwmk/deployment/production_readiness_checker.py": 0.9615384615384616,
+          "pwmk/envs/simple_grid.py": 0.875,
+          "pwmk/monitoring/comprehensive_monitoring.py": 0.8823529411764706,
+          "pwmk/optimization/adaptive_scaling.py": 0.8947368421052632,
+          "pwmk/optimization/advanced_optimization.py": 0.7678571428571429,
+          "pwmk/optimization/auto_scaling.py": 0.9333333333333333,
+          "pwmk/optimization/batching.py": 0.8095238095238095,
+          "pwmk/optimization/caching.py": 0.8275862068965517,
+          "pwmk/optimization/parallel_processing.py": 0.8235294117647058,
+          "pwmk/optimization/performance_optimizer.py": 0.9411764705882353,
+          "pwmk/optimization/quantum_accelerated_inference.py": 0.8823529411764706,
+          "pwmk/optimization/intelligent_caching.py": 0.9,
+          "pwmk/optimization/auto_scaling_engine.py": 0.8518518518518519,
+          "pwmk/planning/epistemic.py": 0.875,
+          "pwmk/quantum/adaptive_quantum.py": 0.9473684210526315,
+          "pwmk/quantum/adaptive_quantum_acceleration.py": 0.9,
+          "pwmk/quantum/consciousness_quantum_bridge.py": 0.9230769230769231,
+          "pwmk/quantum/dashboard.py": 0.9565217391304348,
+          "pwmk/quantum/integration.py": 0.9523809523809523,
+          "pwmk/quantum/monitoring.py": 0.9473684210526315,
+          "pwmk/quantum/performance.py": 0.9523809523809523,
+          "pwmk/quantum/quantum_annealing.py": 0.8461538461538461,
+          "pwmk/quantum/quantum_circuits.py": 0.9375,
+          "pwmk/quantum/quantum_planner.py": 0.9285714285714286,
+          "pwmk/research/advanced_framework.py": 0.9285714285714286,
+          "pwmk/research/publication_generator.py": 0.8333333333333334,
+          "pwmk/research/breakthrough_algorithms.py": 0.8913043478260869,
+          "pwmk/revolution/consciousness_engine.py": 0.8135593220338984,
+          "pwmk/revolution/consciousness_evolution.py": 0.90625,
+          "pwmk/security/belief_validator.py": 0.8888888888888888,
+          "pwmk/security/input_sanitizer.py": 0.8333333333333334,
+          "pwmk/security/quantum_security.py": 0.8536585365853658,
+          "pwmk/security/rate_limiter.py": 0.8666666666666667,
+          "pwmk/security/secure_config_manager.py": 0.8947368421052632,
+          "pwmk/utils/circuit_breaker.py": 0.6875,
+          "pwmk/utils/fallback_manager.py": 0.8571428571428571,
+          "pwmk/utils/health_monitor.py": 0.95,
+          "pwmk/utils/logging.py": 0.42857142857142855,
+          "pwmk/utils/monitoring.py": 0.875,
+          "pwmk/utils/validation.py": 1.0,
+          "pwmk/utils/advanced_monitoring.py": 0.8148148148148148,
+          "pwmk/utils/resilience.py": 0.6071428571428571,
+          "pwmk/validation/comprehensive_system_test.py": 0.8518518518518519,
+          "pwmk/validation/comprehensive_validation.py": 0.8378378378378378,
+          "pwmk/global_deployment/multi_region_orchestrator.py": 0.9583333333333334,
+          "pwmk/global_deployment/i18n_manager.py": 0.9583333333333334
+        },
+        "summary": {
+          "structure_score": "12/12",
+          "syntax_score": "73/73",
+          "total_modules": 73,
+          "avg_docstring_coverage": "87.38%",
+          "total_classes": 254
+        }
+      },
+      "execution_time": 3.6607000827789307,
+      "critical_issues": [],
+      "warnings": [
+        "Low documentation: pwmk/utils/logging.py"
+      ],
+      "recommendations": [
+        "Fix missing structure elements",
+        "Improve documentation coverage"
+      ]
     },
-    "type_check": {
-      "success": false,
-      "required": false,
-      "duration": 0.0011987686157226562,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
+    "security": {
+      "gate_name": "Security",
+      "passed": false,
+      "score": 71.73684210526315,
+      "details": {
+        "secret_scan": {
+          "score": 100,
+          "files_scanned": 133,
+          "suspicious_files": [],
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Use environment variables for secrets",
+            "Implement proper secret management"
+          ]
+        },
+        "dependency_vulnerabilities": {
+          "score": 85,
+          "dependencies_found": true,
+          "vulnerabilities_found": 0,
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Run 'pip install safety && safety check' for vulnerability scanning"
+          ]
+        },
+        "code_security_patterns": {
+          "score": 0,
+          "security_issues_found": 11,
+          "files_with_issues": [
+            "run_comprehensive_validation.py",
+            "run_lightweight_validation.py",
+            "run_quality_gates.py",
+            "validate_generation2.py",
+            "validate_quality_gates.py",
+            "comprehensive_quality_gates.py",
+            "tests/test_generation_all.py",
+            "pwmk/deployment/production_readiness_checker.py"
+          ],
+          "critical_issues": [
+            "Found 11 security anti-patterns"
+          ],
+          "warnings": [
+            "Security issue in run_comprehensive_validation.py",
+            "Security issue in run_lightweight_validation.py",
+            "Security issue in run_quality_gates.py"
+          ],
+          "recommendations": [
+            "Replace unsafe functions with secure alternatives",
+            "Add input validation"
+          ]
+        },
+        "input_validation": {
+          "score": 73.68421052631578,
+          "validation_patterns_found": 49,
+          "files_with_validation": 49,
+          "total_py_files": 133,
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Add more input validation",
+            "Use schema validation libraries"
+          ]
+        },
+        "authentication_security": {
+          "score": 100,
+          "auth_files_found": 12,
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Implement proper authentication",
+            "Use secure password hashing"
+          ]
+        }
+      },
+      "execution_time": 3.903681516647339,
+      "critical_issues": [
+        "Found 11 security anti-patterns"
+      ],
+      "warnings": [
+        "Security issue in run_comprehensive_validation.py",
+        "Security issue in run_lightweight_validation.py",
+        "Security issue in run_quality_gates.py"
+      ],
+      "recommendations": [
+        "Use environment variables for secrets",
+        "Implement proper secret management",
+        "Run 'pip install safety && safety check' for vulnerability scanning",
+        "Replace unsafe functions with secure alternatives",
+        "Add input validation",
+        "Add more input validation",
+        "Use schema validation libraries",
+        "Implement proper authentication",
+        "Use secure password hashing"
+      ]
     },
-    "security_scan": {
-      "success": false,
-      "required": true,
-      "duration": 0.0022623538970947266,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
+    "performance": {
+      "gate_name": "Performance",
+      "passed": true,
+      "score": 75.74412871415596,
+      "details": {
+        "import_performance": {
+          "score": 50,
+          "slow_imports": 64,
+          "files_with_slow_imports": [
+            "conftest.py",
+            "demo.py",
+            "demo_complete_integration.py",
+            "demo_comprehensive.py",
+            "demo_quantum.py"
+          ],
+          "critical_issues": [],
+          "warnings": [
+            "Consider lazy imports for heavy libraries"
+          ],
+          "recommendations": [
+            "Use lazy imports",
+            "Import only what you need"
+          ]
+        },
+        "code_complexity": {
+          "score": 93.00635785649409,
+          "total_functions": 2202,
+          "complex_functions": 154,
+          "complexity_ratio": 0.06993642143505904,
+          "critical_issues": [],
+          "warnings": [
+            "Complex function: __init__",
+            "Complex function: __init__",
+            "Complex function: __init__"
+          ],
+          "recommendations": [
+            "Refactor complex functions",
+            "Use composition over complexity"
+          ]
+        },
+        "memory_efficiency": {
+          "score": 85.71428571428571,
+          "files_with_optimization": 76,
+          "optimization_ratio": 0.5714285714285714,
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Use __slots__ for classes",
+            "Implement caching",
+            "Use generators"
+          ]
+        },
+        "algorithmic_efficiency": {
+          "score": 50,
+          "files_with_efficient_algorithms": 5,
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Use efficient data structures",
+            "Implement vectorized operations"
+          ]
+        },
+        "caching_usage": {
+          "score": 100,
+          "files_with_caching": 17,
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Implement caching for expensive operations",
+            "Use appropriate cache strategies"
+          ]
+        }
+      },
+      "execution_time": 3.955115556716919,
+      "critical_issues": [],
+      "warnings": [
+        "Consider lazy imports for heavy libraries",
+        "Complex function: __init__",
+        "Complex function: __init__",
+        "Complex function: __init__"
+      ],
+      "recommendations": [
+        "Use lazy imports",
+        "Import only what you need",
+        "Refactor complex functions",
+        "Use composition over complexity",
+        "Use __slots__ for classes",
+        "Implement caching",
+        "Use generators",
+        "Use efficient data structures",
+        "Implement vectorized operations",
+        "Implement caching for expensive operations",
+        "Use appropriate cache strategies"
+      ]
     },
-    "unit_tests": {
-      "success": false,
-      "required": true,
-      "duration": 0.0011336803436279297,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "integration_tests": {
-      "success": false,
-      "required": true,
-      "duration": 0.0009765625,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "validation_tests": {
-      "success": false,
-      "required": true,
-      "duration": 0.0009744167327880859,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "performance_benchmark": {
-      "success": false,
-      "required": false,
-      "duration": 0.0007216930389404297,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "memory_leak_check": {
-      "success": false,
-      "required": false,
-      "duration": 0.0006375312805175781,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "dependency_check": {
-      "success": false,
-      "required": true,
-      "duration": 0.0006403923034667969,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "secrets_scan": {
-      "success": false,
-      "required": true,
-      "duration": 0.0006642341613769531,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "documentation_check": {
-      "success": false,
-      "required": false,
-      "duration": 0.0007734298706054688,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "readme_validation": {
-      "success": false,
-      "required": true,
-      "duration": 0.0006465911865234375,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "consciousness_validation": {
-      "success": false,
-      "required": true,
-      "duration": 0.0006911754608154297,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "quantum_validation": {
-      "success": false,
-      "required": true,
-      "duration": 0.0005834102630615234,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
-    },
-    "research_validation": {
-      "success": false,
-      "required": true,
-      "duration": 0.0007076263427734375,
-      "output": "",
-      "error_output": "[Errno 2] No such file or directory: 'python'"
+    "testing": {
+      "gate_name": "Testing",
+      "passed": true,
+      "score": 82.58179231863441,
+      "details": {
+        "test_coverage": {
+          "score": 97.36842105263158,
+          "source_files": 57,
+          "test_files": 37,
+          "coverage_ratio": 0.6491228070175439,
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Write more unit tests",
+            "Achieve at least 80% test coverage"
+          ]
+        },
+        "test_quality": {
+          "score": 40.54054054054054,
+          "total_test_files": 37,
+          "high_quality_test_files": 15,
+          "quality_ratio": 0.40540540540540543,
+          "critical_issues": [],
+          "warnings": [
+            "Low test quality"
+          ],
+          "recommendations": [
+            "Use proper assertions",
+            "Add test fixtures",
+            "Use mocking"
+          ]
+        },
+        "test_organization": {
+          "score": 75,
+          "has_test_directory": true,
+          "has_conftest": true,
+          "has_pytest_ini": true,
+          "has_test_requirements": false,
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Create tests/ directory",
+            "Add conftest.py",
+            "Add pytest.ini"
+          ]
+        },
+        "mocking_patterns": {
+          "score": 100,
+          "files_with_mocking": 8,
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Use mocking for external dependencies",
+            "Mock expensive operations"
+          ]
+        },
+        "integration_tests": {
+          "score": 100,
+          "integration_test_files": 6,
+          "critical_issues": [],
+          "warnings": [],
+          "recommendations": [
+            "Add integration tests",
+            "Test complete workflows"
+          ]
+        }
+      },
+      "execution_time": 3.822507381439209,
+      "critical_issues": [],
+      "warnings": [
+        "Low test quality"
+      ],
+      "recommendations": [
+        "Write more unit tests",
+        "Achieve at least 80% test coverage",
+        "Use proper assertions",
+        "Add test fixtures",
+        "Use mocking",
+        "Create tests/ directory",
+        "Add conftest.py",
+        "Add pytest.ini",
+        "Use mocking for external dependencies",
+        "Mock expensive operations",
+        "Add integration tests",
+        "Test complete workflows"
+      ]
     }
   },
-  "summary": {
-    "total_gates": 15,
-    "passed": 0,
-    "failed": 15,
-    "required_failures": 10
-  },
+  "critical_issues": [
+    "Found 11 security anti-patterns"
+  ],
+  "warnings": [
+    "Low documentation: pwmk/utils/logging.py",
+    "Security issue in run_comprehensive_validation.py",
+    "Security issue in run_lightweight_validation.py",
+    "Security issue in run_quality_gates.py",
+    "Consider lazy imports for heavy libraries",
+    "Complex function: __init__",
+    "Complex function: __init__",
+    "Complex function: __init__",
+    "Low test quality"
+  ],
   "recommendations": [
-    "Fix code style issues using: python -m black pwmk/",
-    "Add type hints and fix type issues",
-    "Address security vulnerabilities identified by bandit",
-    "Fix failing unit tests",
-    "Fix failing integration tests",
-    "Update vulnerable dependencies",
-    "Remove hardcoded secrets and use environment variables"
-  ]
+    "Fix missing structure elements",
+    "Improve documentation coverage",
+    "Use environment variables for secrets",
+    "Implement proper secret management",
+    "Run 'pip install safety && safety check' for vulnerability scanning",
+    "Replace unsafe functions with secure alternatives",
+    "Add input validation",
+    "Add more input validation",
+    "Use schema validation libraries",
+    "Implement proper authentication",
+    "Use secure password hashing",
+    "Use lazy imports",
+    "Import only what you need",
+    "Refactor complex functions",
+    "Use composition over complexity",
+    "Use __slots__ for classes",
+    "Implement caching",
+    "Use generators",
+    "Use efficient data structures",
+    "Implement vectorized operations",
+    "Implement caching for expensive operations",
+    "Use appropriate cache strategies",
+    "Write more unit tests",
+    "Achieve at least 80% test coverage",
+    "Use proper assertions",
+    "Add test fixtures",
+    "Use mocking",
+    "Create tests/ directory",
+    "Add conftest.py",
+    "Add pytest.ini",
+    "Use mocking for external dependencies",
+    "Mock expensive operations",
+    "Add integration tests",
+    "Test complete workflows"
+  ],
+  "execution_time": 3.9578349590301514,
+  "timestamp": 1756122750.1111324
 }
