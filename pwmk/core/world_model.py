@@ -1,234 +1,118 @@
-"""Perspective-aware world model implementation."""
+"""
+WorldModel: Integrates observations and maintains a Bayesian belief state
+over world propositions.
 
-from typing import Dict, List, Tuple, Optional
-import torch
-import torch.nn as nn
-import time
+Bayesian Update
+---------------
+Given:
+  - prior P(proposition)
+  - observation likelihood P(obs | proposition=True) = likelihood
 
-from ..utils.validation import (
-    validate_tensor_shape, validate_model_config, safe_tensor_operation, PWMKValidationError
-)
-from ..utils.logging import LoggingMixin
-from ..utils.monitoring import get_metrics_collector
-from ..utils.circuit_breaker import get_model_circuit_breaker
-from ..utils.fallback_manager import with_fallback
-from ..optimization.caching import get_cache_manager
+We update:
+  P(proposition | obs) ∝ likelihood × P(proposition)
+
+The complementary term for the False branch is (1 - likelihood) × (1 - P(proposition)).
+After normalisation the posterior is:
+
+    P(proposition | obs) = (likelihood × p) / (likelihood × p + (1-likelihood) × (1-p))
+
+This assumes a binary world where the observation is equally likely to be
+made whether the proposition is true (with probability `likelihood`) or false
+(with probability `1 - likelihood`).  It is a simple but analytically clean
+model appropriate for research demonstrations.
+"""
+
+from __future__ import annotations
+
+from pwmk.core.beliefs import BeliefState
 
 
-class PerspectiveWorldModel(nn.Module, LoggingMixin):
+class WorldModel:
     """
-    Neural world model that learns dynamics from multiple agent perspectives.
-    
-    Combines transformer-based dynamics learning with belief extraction
-    for Theory of Mind capabilities.
+    Bayesian world model for a single agent.
+
+    The agent maintains a :class:`BeliefState` and updates it each time
+    a new observation arrives.
+
+    Parameters
+    ----------
+    agent_id : str
+        Identifier of the owning agent.
+    prior : float
+        Default prior probability for unknown propositions (default 0.5).
     """
-    
-    def __init__(
-        self,
-        obs_dim: int,
-        action_dim: int, 
-        hidden_dim: int = 256,
-        num_agents: int = 2,
-        num_layers: int = 3
-    ):
-        super().__init__()
-        
-        # Validate configuration
-        config = {
-            "obs_dim": obs_dim,
-            "action_dim": action_dim,
-            "hidden_dim": hidden_dim,
-            "num_agents": num_agents,
-            "num_layers": num_layers
-        }
-        validate_model_config(config)
-        
-        self.obs_dim = obs_dim
-        self.action_dim = action_dim
-        self.hidden_dim = hidden_dim
-        self.num_agents = num_agents
-        
-        # Caching
-        self.cache_manager = get_cache_manager()
-        self.enable_caching = True
-        
-        self.logger.info(
-            f"Initializing PerspectiveWorldModel: obs_dim={obs_dim}, action_dim={action_dim}, "
-            f"hidden_dim={hidden_dim}, num_agents={num_agents}, num_layers={num_layers}"
-        )
-        
-        # Perspective encoder with agent-specific processing
-        self.perspective_encoder = nn.Sequential(
-            nn.Linear(obs_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim)
-        )
-        
-        # Agent identity embeddings
-        self.agent_embedding = nn.Linear(num_agents, hidden_dim)
-        
-        # State-action projection
-        self.state_action_proj = nn.Linear(hidden_dim + action_dim, hidden_dim)
-        
-        # Dynamics model with improved architecture
-        self.dynamics_model = nn.TransformerEncoder(
-            nn.TransformerEncoderLayer(
-                d_model=hidden_dim,
-                nhead=8,
-                dim_feedforward=hidden_dim * 4,
-                dropout=0.1,
-                batch_first=True
-            ),
-            num_layers=num_layers
-        )
-        
-        # Belief extractor with interpretable predicates
-        self.belief_head = nn.Sequential(
-            nn.Linear(hidden_dim, hidden_dim // 2),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(hidden_dim // 2, 64)  # 64 belief predicates
-        )
-        
-    @with_fallback("model_prediction")
-    def forward(
-        self, 
-        observations: torch.Tensor,
-        actions: torch.Tensor,
-        agent_ids: Optional[torch.Tensor] = None
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+
+    def __init__(self, agent_id: str, prior: float = 0.5) -> None:
+        self.agent_id = agent_id
+        self._beliefs = BeliefState(agent_id, prior=prior)
+        self._observation_count: int = 0
+
+    # ------------------------------------------------------------------
+    # Core API
+    # ------------------------------------------------------------------
+
+    def observe(self, proposition: str, likelihood: float) -> float:
         """
-        Forward pass through the world model.
-        
-        Args:
-            observations: Agent observations [batch, seq_len, obs_dim]
-            actions: Actions taken [batch, seq_len, action_dim] 
-            agent_ids: Agent perspective IDs [batch, seq_len]
-            
-        Returns:
-            next_states: Predicted next states
-            beliefs: Extracted belief predicates
+        Incorporate a new observation and return the updated posterior.
+
+        Parameters
+        ----------
+        proposition : str
+            The world proposition the observation is about.
+        likelihood : float
+            P(observation | proposition=True).  Must be in (0, 1).
+            Values near 1.0 mean "observing this strongly supports the
+            proposition being True"; values near 0.0 mean the observation
+            is evidence *against* it.
+
+        Returns
+        -------
+        float
+            Updated posterior probability P(proposition | observation).
         """
-        start_time = time.time()
-        
-        try:
-            # Check cache first (only in eval mode to avoid caching during training)
-            if (self.enable_caching and 
-                self.cache_manager.is_enabled() and 
-                not self.training):
-                
-                cached_result = self.cache_manager.model_cache.get_prediction(
-                    observations, actions, agent_ids
-                )
-                if cached_result is not None:
-                    duration = time.time() - start_time
-                    get_metrics_collector().record_model_forward("PerspectiveWorldModel_cached", batch_size, duration)
-                    return cached_result
-            
-            # Input validation
-            validate_tensor_shape(observations, (self.obs_dim,), "observations", allow_batch=True)
-            
-            if observations.dim() < 3:
-                raise PWMKValidationError(
-                    f"Observations must have at least 3 dimensions [batch, seq, obs], got {observations.dim()}"
-                )
-            
-            batch_size, seq_len = observations.shape[:2]
-            
-            # Validate actions
-            if isinstance(actions, torch.Tensor):
-                if actions.dim() == 2 and actions.shape == (batch_size, seq_len):
-                    # Discrete actions, convert to one-hot
-                    if torch.any(actions < 0) or torch.any(actions >= self.action_dim):
-                        raise PWMKValidationError(
-                            f"Action indices must be in range [0, {self.action_dim})"
-                        )
-                    actions = torch.nn.functional.one_hot(actions.long(), self.action_dim).float()
-                else:
-                    validate_tensor_shape(actions, (self.action_dim,), "actions", allow_batch=True)
-            
-            # Validate agent IDs if provided
-            if agent_ids is not None:
-                if agent_ids.shape != (batch_size, seq_len):
-                    raise PWMKValidationError(
-                        f"Agent IDs shape {agent_ids.shape} doesn't match batch shape {(batch_size, seq_len)}"
-                    )
-                if torch.any(agent_ids < 0) or torch.any(agent_ids >= self.num_agents):
-                    raise PWMKValidationError(
-                        f"Agent IDs must be in range [0, {self.num_agents})"
-                    )
-            
-            self.logger.debug(
-                f"Forward pass started: batch_size={batch_size}, seq_len={seq_len}, "
-                f"has_agent_ids={agent_ids is not None}"
+        if not 0.0 < likelihood < 1.0:
+            raise ValueError(
+                f"likelihood must be strictly in (0, 1), got {likelihood}"
             )
-            
-            # Encode perspectives with agent-specific processing
-            encoded = safe_tensor_operation(self.perspective_encoder, observations)
-            
-            # Add agent identity embeddings if provided
-            if agent_ids is not None:
-                agent_embeddings = torch.eye(self.num_agents, device=observations.device)[agent_ids]
-                agent_encoded = safe_tensor_operation(self.agent_embedding, agent_embeddings)
-                encoded = encoded + agent_encoded
-            
-            # Concatenate state and action
-            combined = torch.cat([encoded, actions], dim=-1)
-            combined_proj = safe_tensor_operation(self.state_action_proj, combined)
-            
-            # Apply dynamics model
-            next_states = safe_tensor_operation(self.dynamics_model, combined_proj)
-            
-            # Extract beliefs from latent states
-            beliefs = torch.sigmoid(safe_tensor_operation(self.belief_head, next_states))
-            
-            # Cache result if enabled (only in eval mode)
-            if (self.enable_caching and 
-                self.cache_manager.is_enabled() and 
-                not self.training):
-                
-                self.cache_manager.model_cache.cache_prediction(
-                    observations, actions, next_states, beliefs, agent_ids
-                )
-            
-            # Record metrics
-            duration = time.time() - start_time
-            get_metrics_collector().record_model_forward("PerspectiveWorldModel", batch_size, duration)
-            
-            self.logger.debug(
-                f"Forward pass completed: duration={duration:.4f}s, "
-                f"output_shapes=({next_states.shape}, {beliefs.shape})"
-            )
-            
-            return next_states, beliefs
-            
-        except Exception as e:
-            self.logger.error(f"Forward pass failed: {e} (type: {type(e).__name__})")
-            raise
-        
-    def predict_trajectory(
-        self,
-        initial_obs: torch.Tensor,
-        action_sequence: torch.Tensor,
-        horizon: int = 10
-    ) -> List[torch.Tensor]:
-        """Predict future trajectory given initial observation and actions."""
-        trajectory = [initial_obs]
-        current_obs = initial_obs
-        
-        for t in range(horizon):
-            if t < len(action_sequence):
-                action = action_sequence[t:t+1]
-            else:
-                action = torch.zeros(1, self.action_dim)
-                
-            next_state, _ = self.forward(
-                current_obs.unsqueeze(0),
-                action.unsqueeze(0)
-            )
-            trajectory.append(next_state.squeeze(0))
-            current_obs = next_state.squeeze(0)
-            
-        return trajectory
+
+        p_prior = self._beliefs.get(proposition)
+        p_not_prior = 1.0 - p_prior
+
+        # Unnormalised posteriors
+        support_true = likelihood * p_prior
+        support_false = (1.0 - likelihood) * p_not_prior
+
+        normaliser = support_true + support_false
+        if normaliser == 0.0:
+            posterior = 0.5
+        else:
+            posterior = support_true / normaliser
+
+        self._beliefs.update(proposition, posterior)
+        self._observation_count += 1
+        return posterior
+
+    def get_posterior(self, proposition: str) -> float:
+        """Return the current posterior probability of *proposition*."""
+        return self._beliefs.get(proposition)
+
+    # ------------------------------------------------------------------
+    # Introspection
+    # ------------------------------------------------------------------
+
+    @property
+    def belief_state(self) -> BeliefState:
+        """The underlying :class:`BeliefState` object."""
+        return self._beliefs
+
+    @property
+    def observation_count(self) -> int:
+        """Total number of observations processed."""
+        return self._observation_count
+
+    def __repr__(self) -> str:
+        return (
+            f"WorldModel(agent_id={self.agent_id!r}, "
+            f"observations={self._observation_count}, "
+            f"propositions={len(self._beliefs.known_propositions())})"
+        )

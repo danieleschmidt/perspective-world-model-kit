@@ -1,6 +1,6 @@
-"""Core PWMK components."""
+from pwmk.core.beliefs import BeliefState
+from pwmk.core.world_model import WorldModel
+from pwmk.core.theory_of_mind import TheoryOfMindModel
+from pwmk.core.simulator import MultiAgentSimulator
 
-from .world_model import PerspectiveWorldModel
-from .beliefs import BeliefStore
-
-__all__ = ["PerspectiveWorldModel", "BeliefStore"]
+__all__ = ["BeliefState", "WorldModel", "TheoryOfMindModel", "MultiAgentSimulator"]
